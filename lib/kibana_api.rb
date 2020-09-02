@@ -7,7 +7,12 @@ require "kibana_api/configuration"
 module KibanaAPI
 
   class Error < StandardError; end
-  # Your code goes here...
+
+  # Returns the current Kibana client
+  # @return [Object] Kibana client
+  def self.client
+    KibanaAPI::V7::Client.new
+  end
 
 
   # Configuration
