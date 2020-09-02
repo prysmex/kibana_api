@@ -13,8 +13,6 @@ module KibanaAPI
       include Actions::DashboardActions
       include Actions::VisualizationActions
 
-      API_ENDPOINT = @configuration.api_host
-
       attr_reader :api_key
 
       def initialize(api_key = nil)
@@ -24,7 +22,7 @@ module KibanaAPI
       private
 
       def client
-        Faraday.new(API_ENDPOINT) do |client|
+        Faraday.new(KibanaAPI.configuration.api_host) do |client|
           client.request :url_encoded
           client.adapter Faraday.default_adapter
           # Default Kibana API Headers
