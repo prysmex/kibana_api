@@ -6,16 +6,6 @@ require "kibana/configuration"
 
 module Kibana
 
-  class Error < StandardError; end
-
-  # Returns the current Kibana client
-  # @return [Object] Kibana client
-  def self.client
-    Kibana::API::Client.new
-  end
-
-
-  # Configuration
   class << self
     attr_accessor :configuration
   end

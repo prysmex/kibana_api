@@ -1,95 +1,156 @@
 module Kibana
   module API
-    class SavedObject < Client
+    class SavedObjectClient < Client
 
       attr_reader :type
 
-      def initialize
-        super 
-        @type = ""
-      end  
-
       # Retrieves a single Kibana saved object 
-      # @option type [String] Type of the saved object
-      # @option id [String] Id of the saved object
-      # @option space_id [String] Saved object space
+      # @param id [String] Id of the saved object
+      # @param type [String] Type of the saved object
+      # @param space_id [String] Saved object space
       # @return [Object] Parsed response
-      def get_by_id(options)
+      def get_by_id(id, type, space_id = "")
         request(
           http_method: :get,
-          endpoint: build_endpoint(:get, options)
+          endpoint: "#{build_endpoint_with_space(space_id)}/#{type}/#{id}"
+        )
+      end
+
+      # Retrieves multiple Kibana saved object 
+      # @param params [Object] Saved object body
+      # @param space_id [String] Saved object space
+      # @return [Object] Parsed response
+      def bulk_get(params, space_id = "")
+        request(
+          http_method: :post,
+          endpoint: "#{build_endpoint_with_space(space_id)}/_bulk_get",
+          params: params.to_json
+        )
+      end
+
+      # Retrieves multiple paginated Kibana saved objects
+      # @param params [Object] Saved object body
+      # @param space_id [String] Saved object space
+      # @return [Object] Parsed response
+      def find(params, space_id = "")
+        request(
+          http_method: :get,
+          endpoint: "#{build_endpoint_with_space(space_id)}/_find",
+          params: params.to_json
         )
       end
 
       # Verify that a saved object exists
-      # @option type [String] Type of the saved object
-      # @option id [String] Saved object id 
-      # @option space_id [String] Saved object space
+      # @param type [String] Type of the saved object
+      # @param id [String] Saved object id 
+      # @param space_id [String] Saved object space
       # @return [Boolean] 
-      def exists?(options)
+      def exists?(id, type, space_id = "")
         begin
-          get_by_id(options).present?
+          get_by_id(id, type, space_id).present?
         rescue ApiExceptions::NotFoundError
           false
         end
       end
 
       # Creates a Kibana saved object 
-      # @option body [Object] Saved object body
-      # @option type [String] Saved object type
-      # @option id [String] Saved object id 
-      # @option space_id [String] Saved object space
+      # @param params [Object] Saved object body
+      # @param type [String] Saved object type
+      # @param id [String] Saved object id 
+      # @param space_id [String] Saved object space
+      # @param options [String] Saved object options
       # @return [Object] Parsed response
-      def create(options)
+      def create(params, type, id = "", space_id = "", options = {})
         request(
           http_method: :post,
-          endpoint: build_endpoint(:post, options),
-          params: options[:body].to_json
+          endpoint: "#{build_endpoint_with_space(space_id)}/#{type}/#{id}",
+          params: params.to_json
+        )
+      end
+
+      # Creates multiple Kibana saved object 
+      # @param params [Object] Saved object body
+      # @param space_id [String] Saved object space
+      # @return [Object] Parsed response
+      def bulk_create(params, space_id = "", options = {})
+        request(
+          http_method: :post,
+          endpoint: "#{build_endpoint_with_space(space_id)}/_bulk_create",
+          params: params.to_json
         )
       end
 
       # Updates a Kibana saved object 
-      # @option body [Object] Saved object body
-      # @option type [String] Saved object type
-      # @option id [String] Saved object id 
-      # @option space_id [String] Saved object space
+      # @param params [Object] Saved object body
+      # @param type [String] Saved object type
+      # @param id [String] Saved object id 
+      # @param space_id [String] Saved object space
+      # @param options [String] Saved object options
       # @return [Object] Parsed response
-      def update(options)
+      def update(params, type, id, space_id = "", options = {})
         request(
           http_method: :put,
-          endpoint: build_endpoint(:put, options),
-          params: options[:body].to_json
+          endpoint: "#{build_endpoint_with_space(space_id)}/#{type}/#{id}",
+          params: params.to_json
         )
       end
 
       # Deletes a Kibana saved object 
-      # @option type [String] Saved object type
-      # @option id [String] Saved object id 
-      # @option space_id [String] Saved object space
+      # @param type [String] Saved object type
+      # @param id [String] Saved object id 
+      # @param space_id [String] Saved object space
       # @return [Object] Parsed response
-      def delete(options)
+      def delete(id, type, space_id = "")
         request(
           http_method: :delete,
-          endpoint: build_endpoint(:delete, options)
+          endpoint: "#{build_endpoint_with_space(space_id)}/#{type}/#{id}"
+        )
+      end
+
+      # Imports Kibana saved object 
+      # @param params [Object] Saved object body
+      # @param space_id [String] Saved object space
+      # @return [Object] Parsed response
+      def import(params, space_id = "")
+        request(
+          http_method: :post,
+          endpoint: "#{build_endpoint_with_space(space_id)}/_import",
+          params: params.to_json
+        )
+      end
+
+      # Exports Kibana saved object 
+      # @param params [Object] Saved object body
+      # @param space_id [String] Saved object space
+      # @return [Object] Parsed response
+      def export(params, space_id = "", options = {})
+        request(
+          http_method: :post,
+          endpoint: "#{build_endpoint_with_space(space_id)}/_export",
+          params: params.to_json
+        )
+      end
+
+      # Resolve import errors from Kibana saved object 
+      # @param params [Object] Saved object body
+      # @param space_id [String] Saved object space
+      # @return [Object] Parsed response
+      def resolve_import_errors(params, space_id = "", options = {})
+        request(
+          http_method: :post,
+          endpoint: "#{build_endpoint_with_space(space_id)}/_resolve_import_errors",
+          params: params.to_json
         )
       end
 
       private
 
-      def build_endpoint(method, options = {})
-        options = options.merge({type: @type}) if @type.present? 
-        validate_options(method, options)
-        if options[:space_id].present?
-          "s/#{space_id}/api/saved_objects/#{options[:type]}/#{options[:id]}"
+      def build_endpoint_with_space(space_id)
+        if space_id.present?
+          "s/#{space_id}/api/saved_objects"
         else
-          "api/saved_objects/#{options[:type]}/#{options[:id]}"
+          "api/saved_objects"
         end
-      end
-
-      def validate_options(method, options)
-        raise ArgumentError, "Required argument 'id' missing" if [:get, :put, :delete].include?(method) && options[:id].nil?
-        raise ArgumentError, "Required argument 'body' missing" if [:post, :put].include?(method) && options[:body].nil?
-        raise ArgumentError, "Required argument 'type' missing" if options[:type].nil?
       end
 
     end
