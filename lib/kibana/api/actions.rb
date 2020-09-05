@@ -1,6 +1,0 @@
-require_relative 'actions/dashboard'
-require_relative 'actions/index_pattern'
-require_relative 'actions/saved_object'
-require_relative 'actions/space'
-require_relative 'actions/user'
-require_relative 'actions/visualization'

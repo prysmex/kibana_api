@@ -1,23 +1,9 @@
-require_relative 'actions'
-
 module Kibana
   module API
     class Client
 
       include HttpStatusCodes
       include ApiExceptions
-      include Actions::User
-      include Actions::SavedObject
-      include Actions::Space
-      include Actions::IndexPattern
-      include Actions::Dashboard
-      include Actions::Visualization
-
-      attr_reader :api_key
-
-      def initialize
-        @api_key = Kibana.configuration.api_key
-      end
 
       private
 
@@ -27,7 +13,7 @@ module Kibana
           client.adapter Faraday.default_adapter
           # Default Kibana API Headers
           client.headers['kbn-xsrf'] = "true"
-          client.headers['Authorization'] = "ApiKey #{api_key}"
+          client.headers['Authorization'] = "ApiKey #{Kibana.configuration.api_key}"
           client.headers['Content-Type'] = "application/json;charset=UTF-8"
         end
       end
