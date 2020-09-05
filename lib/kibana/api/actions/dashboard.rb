@@ -1,7 +1,7 @@
-module KibanaAPI
-  module V7
+module Kibana
+  module API
     module Actions
-      module DashboardActions
+      module Dashboard
 
         # Retrieves a Kibana dashboard
         # @param id [String] Dashboard id 

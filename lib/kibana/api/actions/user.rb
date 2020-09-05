@@ -1,7 +1,7 @@
-module KibanaAPI
-  module V7
+module Kibana
+  module API
     module Actions
-      module UserActions
+      module User
         def user_features
           request(
             http_method: :get,

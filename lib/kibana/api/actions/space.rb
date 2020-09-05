@@ -1,7 +1,7 @@
-module KibanaAPI
-  module V7
+module Kibana
+  module API
     module Actions
-      module SpaceActions
+      module Space
         
         # Creates a Kibana space 
         # @param params [Object] Space params

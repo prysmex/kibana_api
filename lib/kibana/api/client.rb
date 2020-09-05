@@ -1,28 +1,28 @@
 require_relative 'actions'
 
-module KibanaAPI
-  module V7
+module Kibana
+  module API
     class Client
 
       include HttpStatusCodes
       include ApiExceptions
-      include Actions::UserActions
-      include Actions::SavedObjectActions
-      include Actions::SpaceActions
-      include Actions::IndexPatternActions
-      include Actions::DashboardActions
-      include Actions::VisualizationActions
+      include Actions::User
+      include Actions::SavedObject
+      include Actions::Space
+      include Actions::IndexPattern
+      include Actions::Dashboard
+      include Actions::Visualization
 
       attr_reader :api_key
 
       def initialize
-        @api_key = KibanaAPI.configuration.api_key
+        @api_key = Kibana.configuration.api_key
       end
 
       private
 
       def client
-        Faraday.new(KibanaAPI.configuration.api_host) do |client|
+        Faraday.new(Kibana.configuration.api_host) do |client|
           client.request :url_encoded
           client.adapter Faraday.default_adapter
           # Default Kibana API Headers

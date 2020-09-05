@@ -1,7 +1,7 @@
-module KibanaAPI
-  module V7
+module Kibana
+  module API
     module Actions
-      module VisualizationActions
+      module Visualization
 
         # Retrieves a Kibana visualization
         # @param id [String] Visualization id 

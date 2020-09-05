@@ -1,11 +1,11 @@
 
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "kibana_api/version"
+require "kibana/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "kibana_api"
-  spec.version       = KibanaAPI::VERSION
+  spec.name          = "kibana"
+  spec.version       = Kibana::VERSION
   spec.authors       = ["victor-aguilars"]
   spec.email         = ["victor.aguilarsnz@gmail.com"]
 

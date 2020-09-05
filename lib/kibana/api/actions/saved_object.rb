@@ -1,7 +1,7 @@
-module KibanaAPI
-  module V7
+module Kibana
+  module API
     module Actions
-      module SavedObjectActions
+      module SavedObject
 
         # Retrieves a single Kibana saved object 
         # @param type [String] Type of the saved object

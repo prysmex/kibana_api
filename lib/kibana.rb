@@ -1,17 +1,17 @@
-require "kibana_api/version"
-require "kibana_api/api_exceptions"
-require "kibana_api/http_status_codes"
-require "kibana_api/v7"
-require "kibana_api/configuration"
+require "kibana/version"
+require "kibana/api_exceptions"
+require "kibana/http_status_codes"
+require "kibana/api"
+require "kibana/configuration"
 
-module KibanaAPI
+module Kibana
 
   class Error < StandardError; end
 
   # Returns the current Kibana client
   # @return [Object] Kibana client
   def self.client
-    KibanaAPI::V7::Client.new
+    Kibana::API::Client.new
   end
 
 

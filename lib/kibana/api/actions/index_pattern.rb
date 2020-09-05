@@ -1,7 +1,7 @@
-module KibanaAPI
-  module V7
+module Kibana
+  module API
     module Actions
-      module IndexPatternActions
+      module IndexPattern
 
         # Retrieves a Kibana index pattern
         # @param id [String] Index pattern id 
