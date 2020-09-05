@@ -3,36 +3,51 @@ module Kibana
     module Actions
       module IndexPattern
 
-        # Retrieves a Kibana index pattern
-        # @param id [String] Index pattern id 
+        # Retrieves a single Kibana index pattern 
+        # @option type [String] Type of the index pattern
+        # @option id [String] Id of the index pattern
+        # @option space_id [String] Index pattern space
         # @return [Object] Parsed response
-        def get_index_pattern(id)
-          get_saved_object_by_id("index-pattern", id)
+        def get_index_pattern(options)
+          get_saved_object_by_id(options.merge({type: "index-pattern"}))
         end
 
-        # Verify that an index pattern exists
-        # @param id [String] Index pattern id 
+        # Verify that a index pattern exists
+        # @option type [String] Type of the index pattern
+        # @option id [String] Index pattern id 
+        # @option space_id [String] Index pattern space
         # @return [Boolean] 
-        def index_pattern_exists?(id)
-          saved_object_exists?("index-pattern", id)
+        def index_pattern_exists?(options)
+          saved_object_exists?(options.merge({type: "index-pattern"}))
         end
 
-        # Creates a Kibana index pattern
-        # @param params [Object] Index pattern params
-        # @param id [String] Index pattern id 
-        # @param space_id [String] Index pattern space
+        # Creates a Kibana index pattern 
+        # @option body [Object] Index pattern body
+        # @option type [String] Index pattern type
+        # @option id [String] Index pattern id 
+        # @option space_id [String] Index pattern space
         # @return [Object] Parsed response
-        def create_index_pattern(params, id = "", space_id = "")
-          create_saved_object(params, "index-pattern", id, space_id)
+        def create_index_pattern(options)
+          create_saved_object(options.merge({type: "index-pattern"}))
         end
 
-        # Updates a Kibana index pattern
-        # @param params [Object] Index pattern params
-        # @param id [String] Index pattern id 
-        # @param space_id [String] Index pattern space
+        # Updates a Kibana index pattern 
+        # @option body [Object] Index pattern body
+        # @option type [String] Index pattern type
+        # @option id [String] Index pattern id 
+        # @option space_id [String] Index pattern space
         # @return [Object] Parsed response
-        def update_index_pattern(params, id, space_id = "")
-          update_saved_object(params, "index-pattern", id, space_id)
+        def update_index_pattern(options)
+          update_saved_object(options.merge({type: "index-pattern"}))
+        end
+
+        # Deletes a Kibana index pattern 
+        # @option type [String] Index pattern type
+        # @option id [String] Index pattern id 
+        # @option space_id [String] Index pattern space
+        # @return [Object] Parsed response
+        def delete_index_pattern(options)
+          delete_saved_object(options.merge({type: "index-pattern"}))
         end
 
       end
