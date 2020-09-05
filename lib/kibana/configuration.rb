@@ -1,4 +1,4 @@
-module KibanaAPI
+module Kibana
   class Configuration
     attr_accessor :api_key, :api_host
 

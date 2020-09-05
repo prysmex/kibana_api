@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "kibana_api"
+require "kibana"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -13,7 +13,7 @@ RSpec.configure do |config|
   end
 
   config.before(:all) do
-    KibanaAPI.configure do |config|
+    Kibana.configure do |config|
       config.api_host = ENV['KIBANA_API_HOST']
       config.api_key = ENV['KIBANA_API_KEY']
     end
