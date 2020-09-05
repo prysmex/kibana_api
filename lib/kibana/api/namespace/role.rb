@@ -17,7 +17,7 @@ module Kibana
       def update(id, params)
         request(
           http_method: :put,
-          endpoint: "/api/security/role/#{id}",
+          endpoint: "api/security/role/#{id}",
           params: params.to_json
         )
       end
@@ -28,7 +28,7 @@ module Kibana
       def get_by_id(id)
         request(
           http_method: :get,
-          endpoint: "/api/security/role/#{id}"
+          endpoint: "api/security/role/#{id}"
         )
       end
 
@@ -37,7 +37,7 @@ module Kibana
       def get_all
         request(
           http_method: :get,
-          endpoint: "/api/security/role/"
+          endpoint: "api/security/role"
         )
       end
 
@@ -47,7 +47,7 @@ module Kibana
       def delete(id)
         request(
           http_method: :delete,
-          endpoint: "/api/security/role/#{id}"
+          endpoint: "api/security/role/#{id}"
         )
       end
       

@@ -8,7 +8,7 @@ module Kibana
       def create(params)
         request(
           http_method: :post,
-          endpoint: "api/spaces/space/",
+          endpoint: "api/spaces/space",
           params: params.to_json
         )
       end
@@ -40,7 +40,7 @@ module Kibana
       def get_all
         request(
           http_method: :get,
-          endpoint: "api/spaces/space/"
+          endpoint: "api/spaces/space"
         )
       end
 
@@ -50,7 +50,7 @@ module Kibana
       def delete(id)
         request(
           http_method: :delete,
-          endpoint: "api/spaces/space/#{params[:id]}"
+          endpoint: "api/spaces/space/#{id}"
         )
       end
 
