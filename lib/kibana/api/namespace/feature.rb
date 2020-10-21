@@ -1,6 +1,6 @@
 module Kibana
   module API
-    class UserClient < Client
+    class FeatureClient < Client
 
       def features
         request(

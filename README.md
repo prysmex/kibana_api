@@ -36,13 +36,13 @@ Remember to base64-encode the id and api_key provided by Kibana like this: `id:a
 Kibana::API provides a list of clients that will help you make requests to the REST API. You need to instanciate the client that you require and it will give you access to the methods specified by Kibana.
 
 ```ruby
-saved_object_client = Kibana::API::SavedObjectClient.new
-saved_object_client.create(params, "index-pattern",  "my_new_index_pattern")
+saved_object_client = Kibana::API::SavedObjectClient.new or Kibana::API.saved_object_client
+saved_object_client.create("index-pattern", {...})
 ```
 
 - [Kibana::API::SpaceClient](https://www.elastic.co/guide/en/kibana/master/spaces-api.html)
-  - `create(params)` 
-  - `update(id, params)`
+  - `create(body)` 
+  - `update(id, body)`
   - `get_by_id(id)`
   - `get_all`
   - `delete(id)`
@@ -50,21 +50,21 @@ saved_object_client.create(params, "index-pattern",  "my_new_index_pattern")
   - `resolve_copy_to_space_conflicts TODO`
 
 - [Kibana::API::SavedObjectClient](https://www.elastic.co/guide/en/kibana/master/saved-objects-api.html)
-  - `create(params, type, id, space_id, options)` 
-  - `bulk_create(params, space_id, options)`
-  - `update(params, type, id, space_id, options)`
-  - `get_by_id(id, type, space_id)`
-  - `delete(id, type, space_id)`
-  - `bulk_get(params, space_id)`
-  - `find(params, space_id)`
-  - `exists?(id, type, space_id)`
-  - `import(params, space_id)`
-  - `export(params, space_id, options)`
-  - `resolve_import_errors(params, space_id, options)`
+  - `get_by_id(type, id, options)`
+  - `bulk_get(params, options)`
+  - `find(options)`
+  - `create(type, body, options)` 
+  - `bulk_create(body, options)`
+  - `update(body, type, id, options)`
+  - `delete(id, type, options)`
+  - `export(body, options)`
+  - `import(body, options)`
+  - `resolve_import_errors(body, options)`
+  - `exists?(type, id, options)`
 
 - [Kibana::API::RoleClient](https://www.elastic.co/guide/en/kibana/master/role-management-api.html)
-  - `create(id, params)` 
-  - `update(id, params)`
+  - `create(id, body)` 
+  - `update(id, body)`
   - `get_by_id(id)`
   - `get_all`
   - `delete(id)`
