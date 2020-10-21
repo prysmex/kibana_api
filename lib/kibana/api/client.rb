@@ -1,5 +1,30 @@
+#ToDo maybe this should be a module instead of a class?
+
 module Kibana
   module API
+
+    module ClassMethods
+
+      attr_writer :features_client, :role_client, :saved_object_client, :space_client
+      def features_client
+        @features_client ||= FeatureClient.new
+      end
+
+      def role_client
+        @role_client ||= RoleClient.new
+      end
+
+      def saved_object_client
+        @saved_objects_client ||= SavedObjectClient.new
+      end
+
+      def space_client
+        @space_client ||= SpaceClient.new
+      end
+    end
+
+    extend ClassMethods
+
     class Client
 
       include HttpStatusCodes
@@ -18,8 +43,11 @@ module Kibana
         end
       end
 
-      def request(http_method:, endpoint:, params: {})
-        response = client.public_send(http_method, endpoint, params)
+      def request(http_method:, endpoint:, params: {}, body: {})
+        response = client.public_send(http_method, endpoint) do |req|
+          req.params = req.params.merge(params)
+          req.body = body.to_json
+        end
         parsed_response = Oj.load(response.body)
 
         return parsed_response if response_successful?(response)
@@ -47,6 +75,7 @@ module Kibana
       def response_successful?(response)
         response.status == HTTP_OK_CODE
       end
+      
     end
   end
 end
