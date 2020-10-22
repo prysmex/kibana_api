@@ -42,10 +42,9 @@ module Kibana
       # Retrieves a single Kibana saved object 
       # @param id [String] Id of the saved object
       # @param type [String] Type of the saved object
-      # @param options [Object] space_id and query params
+      # @param options [Object] query params
       # @return [Object] Parsed response
       def get_by_id(type, id, options = {})
-        # space_id = options.delete(:space_id) || @space_id
         _validate_type(type)
         request(
           http_method: :get,
@@ -56,10 +55,9 @@ module Kibana
 
       # Retrieves multiple Kibana saved object 
       # @param body [Array] Array of query objects
-      # @param options [Object] space_id and query params
+      # @param options [Object] query params
       # @return [Object] Parsed response
       def bulk_get(body, options = {})
-        # space_id = options.delete(:space_id) || @space_id
         body = body.map do |obj|
           _validate_type(obj[:type])
           obj.slice(:type, :id, :fields)
@@ -73,10 +71,9 @@ module Kibana
       end
 
       # Retrieves multiple paginated Kibana saved objects
-      # @param options [Object] space_id and query params
+      # @param options [Object] query params
       # @return [Object] Parsed response
       def find(options = {})
-        # space_id = options.delete(:space_id) || @space_id
         if options.key?(:type)
           if options[:type].is_a?(::Array)
             options[:type].each{|type| _validate_type(type) }
@@ -94,11 +91,10 @@ module Kibana
       # Creates a Kibana saved object 
       # @param type [String] Saved object type
       # @param body [Object] Saved object body
-      # @param options [Object] space_id, id and query params
+      # @param options [Object] id and query params
       # @return [Object] Parsed response
       def create(type, body, options = {})
         _validate_type(type)
-        # space_id = options.delete(:space_id) || @space_id
         id = options.delete(:id)
         endpoint = if id
           "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}/#{id}"
@@ -115,10 +111,9 @@ module Kibana
 
       # Creates multiple Kibana saved object 
       # @param body [Array] Array of saved objects
-      # @param options [Object] space_id and query params
+      # @param options [Object] query params
       # @return [Object] Parsed response
       def bulk_create(body, options = {})
-        # space_id = options.delete(:space_id) || @space_id
         body = body.map do |obj|
           _validate_type(obj[:type])
           obj.slice(:type, :id, :attributes, :references, :initialNamespaces, :version)
@@ -135,10 +130,9 @@ module Kibana
       # @param body [Object] Saved object body
       # @param type [String] Saved object type
       # @param id [String] Saved object id 
-      # @param options [Object] space_id and query params
+      # @param options [Object] query params
       # @return [Object] Parsed response
       def update(body, type, id, options = {})
-        # space_id = options.delete(:space_id) || @space_id
         request(
           http_method: :put,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}/#{id}",
@@ -150,10 +144,9 @@ module Kibana
       # Deletes a Kibana saved object 
       # @param type [String] Saved object type
       # @param id [String] Saved object id 
-      # @param options [Object] space_id and query params
+      # @param options [Object] query params
       # @return [Object] Parsed response
       def delete(id, type, options = {})
-        # space_id = options.delete(:space_id) || @space_id
         request(
           http_method: :delete,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}/#{id}",
@@ -163,10 +156,9 @@ module Kibana
 
       # Exports Kibana saved object 
       # @param body [Object] Saved object body
-      # @param options [Object] space_id and query params
+      # @param options [Object] query params
       # @return [Object] Parsed response
       def export(body, options = {})
-        # space_id = options.delete(:space_id) || @space_id
         request(
           http_method: :post,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_export",
@@ -177,10 +169,9 @@ module Kibana
 
       # Imports Kibana saved object 
       # @param body [Object] Saved object body
-      # @param options [Object] space_id and query params
+      # @param options [Object] query params
       # @return [Object] Parsed response
       def import(body, options = {})
-        # space_id = options.delete(:space_id) || @space_id
         request(
           http_method: :post,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_import",
@@ -191,10 +182,9 @@ module Kibana
 
       # Resolve import errors from Kibana saved object 
       # @param body [Object] Saved object body
-      # @param options [Object] space_id and query params
+      # @param options [Object] query params
       # @return [Object] Parsed response
       def resolve_import_errors(body, options = {})
-        # space_id = options.delete(:space_id) || @space_id
         request(
           http_method: :post,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_resolve_import_errors",
@@ -206,7 +196,7 @@ module Kibana
       # Verify that a saved object exists
       # @param type [String] Type of the saved object
       # @param id [String] Saved object id 
-      # @param options [Object] space_id and query params
+      # @param options [Object] query params
       # @return [Boolean] 
       def exists?(type, id, options)
         begin
@@ -217,7 +207,6 @@ module Kibana
       end
 
       def related_objects(type, id, options = {})
-        # space_id = options.delete(:space_id) || @space_id
         _validate_type(type)
         request(
           http_method: :get,
@@ -228,7 +217,6 @@ module Kibana
 
       # counts({typesToInclude: [:visualization]})
       def counts(body)
-        # space_id = options.delete(:space_id) || @space_id
         request(
           http_method: :post,
           endpoint: "#{api_namespace_for_space(@space_id)}/kibana/management/saved_objects/scroll/counts",
@@ -282,10 +270,10 @@ module Kibana
       end
 
       def api_namespace_for_space(@space_id)
-        if space_id.present?
-          "s/#{space_id}/api"
-        else
+        if space_id.nil?
           "api"
+        else
+          "s/#{space_id}/api"
         end
       end
 
