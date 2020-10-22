@@ -33,7 +33,7 @@ module Kibana
       private
 
       def client
-        Faraday.new(Kibana.configuration.api_host) do |client|
+        Faraday.new(Kibana.configuration.api_host, {request: { params_encoder: Faraday::FlatParamsEncoder }}) do |client|
           client.request :url_encoded
           client.adapter Faraday.default_adapter
           # Default Kibana API Headers
