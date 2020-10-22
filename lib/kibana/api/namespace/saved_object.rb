@@ -269,7 +269,7 @@ module Kibana
         raise ArgumentError, "SavedObject type '#{type}' is not valid" unless TYPES.include?(type.to_sym)
       end
 
-      def api_namespace_for_space(@space_id)
+      def api_namespace_for_space(space_id)
         if space_id.nil?
           "api"
         else
