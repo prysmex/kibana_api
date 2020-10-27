@@ -84,7 +84,9 @@ module Kibana
       end
       
       def response_successful?(response)
-        response.status == HTTP_OK_CODE
+        [
+          HTTP_NO_CONTENT, HTTP_OK_CODE
+        ].include?(response.status)
       end
       
     end
