@@ -21,6 +21,10 @@ module Kibana
       def space_client
         @space_client ||= SpaceClient.new
       end
+
+      def client
+        @client ||= Client.new
+      end
     end
 
     extend ClassMethods
@@ -37,9 +41,9 @@ module Kibana
           client.request :url_encoded
           client.adapter Faraday.default_adapter
           # Default Kibana API Headers
-          client.headers['kbn-xsrf'] = "true"
+          client.headers['kbn-xsrf'] = 'true'
           client.headers['Authorization'] = "ApiKey #{Kibana.configuration.api_key}"
-          client.headers['Content-Type'] = "application/json;charset=UTF-8"
+          client.headers['Content-Type'] = 'application/json;charset=UTF-8'
         end
       end
 

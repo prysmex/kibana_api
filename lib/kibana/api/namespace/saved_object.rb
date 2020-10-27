@@ -57,10 +57,10 @@ module Kibana
       # @param body [Array] Array of query objects
       # @param options [Object] query params
       # @return [Object] Parsed response
+      # body whitelist (:type, :id, :fields)
       def bulk_get(body, options = {})
-        body = body.map do |obj|
+        body.each do |obj|
           _validate_type(obj[:type])
-          obj.slice(:type, :id, :fields)
         end
         request(
           http_method: :post,
@@ -73,6 +73,7 @@ module Kibana
       # Retrieves multiple paginated Kibana saved objects
       # @param options [Object] query params
       # @return [Object] Parsed response
+      # params whitelist (:type, :per_page, :page, :search, :default_search_operator, :search_fields, :fields, :sort_field, :has_reference, :filter)
       def find(options = {})
         if options.key?(:type)
           if options[:type].is_a?(::Array)
@@ -84,7 +85,7 @@ module Kibana
         request(
           http_method: :get,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_find",
-          params: options.slice(:type, :per_page, :page, :search, :default_search_operator, :search_fields, :fields, :sort_field, :has_reference, :filter)
+          params: options
         )
       end
 
@@ -93,6 +94,8 @@ module Kibana
       # @param body [Object] Saved object body
       # @param options [Object] id and query params
       # @return [Object] Parsed response
+      # body whitelist (:attributes, :references, :initialNamespaces)
+      # params whitelist (:overwrite)
       def create(type, body, options = {})
         _validate_type(type)
         id = options.delete(:id)
@@ -104,8 +107,8 @@ module Kibana
         request(
           http_method: :post,
           endpoint: endpoint,
-          params: options.slice(:overwrite),
-          body: body.slice(:attributes, :references, :initialNamespaces)
+          params: options,
+          body: body
         )
       end
 
@@ -113,15 +116,16 @@ module Kibana
       # @param body [Array] Array of saved objects
       # @param options [Object] query params
       # @return [Object] Parsed response
+      # body whitelist (:type, :id, :attributes, :references, :initialNamespaces, :version)
+      # params whitelist (:overwrite)
       def bulk_create(body, options = {})
-        body = body.map do |obj|
+        body.each do |obj|
           _validate_type(obj[:type])
-          obj.slice(:type, :id, :attributes, :references, :initialNamespaces, :version)
         end
         request(
           http_method: :post,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_bulk_create",
-          params: options.slice(:overwrite),
+          params: options,
           body: body
         )
       end
@@ -132,12 +136,13 @@ module Kibana
       # @param id [String] Saved object id 
       # @param options [Object] query params
       # @return [Object] Parsed response
+      # body whitelist (:attributes, :references)
       def update(body, type, id, options = {})
         request(
           http_method: :put,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}/#{id}",
           params: options.slice(),
-          body: body.slice(:attributes, :references),
+          body: body
         )
       end
 
@@ -146,11 +151,12 @@ module Kibana
       # @param id [String] Saved object id 
       # @param options [Object] query params
       # @return [Object] Parsed response
+      # params whitelist (:force)
       def delete(id, type, options = {})
         request(
           http_method: :delete,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}/#{id}",
-          params: options.slice(:force)
+          params: options
         )
       end
 
@@ -169,26 +175,26 @@ module Kibana
 
       # Imports Kibana saved object 
       # @param body [Object] Saved object body
-      # @param options [Object] query params
+      # @param options [Object] query params (:createNewCopies, :overwrite)
       # @return [Object] Parsed response
       def import(body, options = {})
         request(
           http_method: :post,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_import",
-          params: options.slice(:createNewCopies, :overwrite),
+          params: options,
           body: body
         )
       end
 
       # Resolve import errors from Kibana saved object 
       # @param body [Object] Saved object body
-      # @param options [Object] query params
+      # @param options [Object] query params (:createNewCopies)
       # @return [Object] Parsed response
       def resolve_import_errors(body, options = {})
         request(
           http_method: :post,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_resolve_import_errors",
-          params: options.slice(:createNewCopies),
+          params: options,
           body: body
         )
       end
@@ -196,7 +202,7 @@ module Kibana
       # Verify that a saved object exists
       # @param type [String] Type of the saved object
       # @param id [String] Saved object id 
-      # @param options [Object] query params
+      # @param options [Object] query params (:savedObjectTypes)
       # @return [Boolean] 
       def exists?(type, id, options)
         begin
@@ -211,16 +217,18 @@ module Kibana
         request(
           http_method: :get,
           endpoint: "#{api_namespace_for_space(@space_id)}/kibana/management/saved_objects/relationships/#{type}/#{id}",
-          params: options.slice(:savedObjectTypes)
+          params: options
         )
       end
 
       # counts({typesToInclude: [:visualization]})
+      # @param body [Object] (:typesToInclude)
+      # @return [Object]
       def counts(body)
         request(
           http_method: :post,
           endpoint: "#{api_namespace_for_space(@space_id)}/kibana/management/saved_objects/scroll/counts",
-          body: body.slice(:typesToInclude)
+          body: body
         )
       end
 
@@ -242,6 +250,9 @@ module Kibana
       end
 
       #example to find orphan visualizations find_all_orphans({type: [:visualization], fields: [:title]}, :dashboard)
+      # @param options [Object] find params (same whitelist as find method)
+      # @param parent_type [Symbol] the type of the parent object
+      # @return [Array] of saved objects
       def find_orphans(options = {}, parent_type)
         raise ArgumentError, "options[:type] must be an array of valid types" unless options[:type].is_a? ::Array
 
@@ -261,6 +272,19 @@ module Kibana
         all_objects.select do |obj|
           all_parents_children.find{|v| v['id'] == obj['id']}.nil?
         end
+      end
+
+      # @param [String] title of the index pattern, not the id
+      # @return [Object] a hash containing all fields under 'fields' key
+      def index_pattern_fields(pattern)
+        request(
+          http_method: :get,
+          endpoint: '/api/index_patterns/_fields_for_wildcard',
+          params: {
+            pattern: pattern,
+            meta_fields: [:_source, :_id, :_type, :_index, :_score]
+          }
+        )
       end
 
       private
