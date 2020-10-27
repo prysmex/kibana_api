@@ -43,15 +43,22 @@ module Kibana
         end
       end
 
-      def request(http_method:, endpoint:, params: {}, body: {})
-        response = client.public_send(http_method, endpoint) do |req|
+      def raw_request(http_method:, endpoint:, params: {}, body: {})
+        client.public_send(http_method, endpoint) do |req|
           req.params = req.params.merge(params)
           req.body = body.to_json
         end
+      end
+
+      def request(http_method:, endpoint:, params: {}, body: {})
+        response = raw_request({
+          http_method: http_method,
+          endpoint: endpoint,
+          params: params,
+          body: body
+        })
         parsed_response = Oj.load(response.body)
-
         return parsed_response if response_successful?(response)
-
         raise error_class(response), "Code: #{response.status}, response: #{response.body}"
       end
 

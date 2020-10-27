@@ -159,7 +159,7 @@ module Kibana
       # @param options [Object] query params
       # @return [Object] Parsed response
       def export(body, options = {})
-        request(
+        raw_request(
           http_method: :post,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_export",
           params: options.slice(),
