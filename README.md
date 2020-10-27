@@ -61,6 +61,10 @@ saved_object_client.create("index-pattern", {...})
   - `import(body, options)`
   - `resolve_import_errors(body, options)`
   - `exists?(type, id, options)`
+  - `related_objects(type, id, options)`
+  - `counts(body)`
+  - `find_all_pages(body)`
+  - `find_orphans(body, parent_type)`
 
 - [Kibana::API::RoleClient](https://www.elastic.co/guide/en/kibana/master/role-management-api.html)
   - `create(id, body)` 
@@ -69,10 +73,12 @@ saved_object_client.create("index-pattern", {...})
   - `get_all`
   - `delete(id)`
 
+- [Kibana::API::FeatureClient](https://www.elastic.co/guide/en/kibana/master/role-management-api.html)
+  - `features`
+
 ### Notes
 
 There are still missing some clients and methods, but it has the essentials to get started with the integration.
-
 
 ## Development
 
