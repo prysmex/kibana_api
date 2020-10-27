@@ -21,7 +21,7 @@ module Kibana
       # @param body [Object] Space body
       # @return [Object] Parsed response
       def create(body)
-        body = symbolized_filtered_body(body)
+        body = symbolize_and_filter(body)
         validate_required(body)
         validate_datatypes(body)
         request(
@@ -36,7 +36,7 @@ module Kibana
       # @param body [Object] Space body
       # @return [Object] Parsed response
       def update(id, body)
-        body = symbolized_filtered_body(body)
+        body = symbolize_and_filter(body)
         validate_datatypes(body)
         request(
           http_method: :put,
@@ -113,7 +113,7 @@ module Kibana
         raise ArgumentError, "'imageUrl' must be a string" if body[:imageUrl] && !body[:imageUrl].is_a?(String)
       end
 
-      def symbolized_filtered_body(body)
+      def symbolize_and_filter(body)
         body.transform_keys{|k| k.to_sym}.slice(
           :id, :name, :description, :disabledFeatures, :initials, :color, :imageUrl
         )
