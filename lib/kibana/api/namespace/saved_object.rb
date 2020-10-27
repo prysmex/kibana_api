@@ -123,7 +123,7 @@ module Kibana
       def bulk_create(body, options = {})
         body = body.map do |obj|
           _validate_type(obj[:type])
-          symbolize_keys(body).slice(:type, :id, :attributes, :references, :initialNamespaces, :version)
+          symbolize_keys(obj).slice(:type, :id, :attributes, :references, :initialNamespaces, :version)
         end
         options = symbolize_keys(options).slice(:overwrite)
 
