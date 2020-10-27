@@ -23,6 +23,7 @@ module Kibana
         :'inventory-view'
       ].freeze
 
+      # set the space context
       def with_space(space_id)
         prev_space = @space_id
         @space_id = space_id
@@ -31,6 +32,7 @@ module Kibana
         @space_id = prev_space
       end
 
+      # iterate all spaces and set context
       def each_space(&block)
         return_value = {}
         _defined_spaces.each do |space|
@@ -46,42 +48,43 @@ module Kibana
       # @return [Object] Parsed response
       def get_by_id(type, id, options = {})
         _validate_type(type)
+        options = symbolize_keys(options).slice()
+
         request(
           http_method: :get,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}/#{id}",
-          params: options.slice()
+          params: options
         )
       end
 
       # Retrieves multiple Kibana saved object 
-      # @param body [Array] Array of query objects
+      # @param body [Array] Array of query objects (:type, :id, :fields)
       # @param options [Object] query params
       # @return [Object] Parsed response
-      # body whitelist (:type, :id, :fields)
       def bulk_get(body, options = {})
-        body.each do |obj|
+        body = body.map do |obj|
           _validate_type(obj[:type])
+          symbolize_keys(obj).slice(:type, :id, :fields)
         end
+        options = symbolize_keys(options).slice()
+
         request(
           http_method: :post,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_bulk_get",
           body: body,
-          params: options.slice()
+          params: options
         )
       end
 
       # Retrieves multiple paginated Kibana saved objects
-      # @param options [Object] query params
+      # @param options [Object] query params (:type, :per_page, :page, :search, :default_search_operator, :search_fields, :fields, :sort_field, :has_reference, :filter)
       # @return [Object] Parsed response
-      # params whitelist (:type, :per_page, :page, :search, :default_search_operator, :search_fields, :fields, :sort_field, :has_reference, :filter)
       def find(options = {})
-        if options.key?(:type)
-          if options[:type].is_a?(::Array)
-            options[:type].each{|type| _validate_type(type) }
-          else
-            _validate_type(options[:type]) if options.key?(:type)
-          end
-        end
+        options = symbolize_keys(options).slice(
+          :type, :per_page, :page, :search, :default_search_operator, :search_fields, :fields, :sort_field, :has_reference, :filter
+        )
+        _validate_type(options[:type]) if options.key?(:type)
+
         request(
           http_method: :get,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_find",
@@ -91,19 +94,20 @@ module Kibana
 
       # Creates a Kibana saved object 
       # @param type [String] Saved object type
-      # @param body [Object] Saved object body
-      # @param options [Object] id and query params
+      # @param body [Object] Saved object body (:attributes, :references, :initialNamespaces)
+      # @param options [Object] id and query params (:overwrite)
       # @return [Object] Parsed response
-      # body whitelist (:attributes, :references, :initialNamespaces)
-      # params whitelist (:overwrite)
       def create(type, body, options = {})
         _validate_type(type)
         id = options.delete(:id)
+        body = symbolize_keys(body).slice(:attributes, :references, :initialNamespaces)
+        options = symbolize_keys(options).slice(:overwrite)
         endpoint = if id
           "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}/#{id}"
         else
           "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}"
         end
+
         request(
           http_method: :post,
           endpoint: endpoint,
@@ -113,15 +117,16 @@ module Kibana
       end
 
       # Creates multiple Kibana saved object 
-      # @param body [Array] Array of saved objects
-      # @param options [Object] query params
+      # @param body [Array] Array of saved objects (:type, :id, :attributes, :references, :initialNamespaces, :version)
+      # @param options [Object] query params (:overwrite)
       # @return [Object] Parsed response
-      # body whitelist (:type, :id, :attributes, :references, :initialNamespaces, :version)
-      # params whitelist (:overwrite)
       def bulk_create(body, options = {})
-        body.each do |obj|
+        body = body.map do |obj|
           _validate_type(obj[:type])
+          symbolize_keys(body).slice(:type, :id, :attributes, :references, :initialNamespaces, :version)
         end
+        options = symbolize_keys(options).slice(:overwrite)
+
         request(
           http_method: :post,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_bulk_create",
@@ -131,17 +136,19 @@ module Kibana
       end
 
       # Updates a Kibana saved object 
-      # @param body [Object] Saved object body
+      # @param body [Object] Saved object body (:attributes, :references)
       # @param type [String] Saved object type
       # @param id [String] Saved object id 
       # @param options [Object] query params
       # @return [Object] Parsed response
-      # body whitelist (:attributes, :references)
       def update(body, type, id, options = {})
+        body = symbolize_keys(body).slice(:attributes, :references)
+        options = symbolize_keys(options).slice()
+
         request(
           http_method: :put,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}/#{id}",
-          params: options.slice(),
+          params: options,
           body: body
         )
       end
@@ -149,10 +156,11 @@ module Kibana
       # Deletes a Kibana saved object 
       # @param type [String] Saved object type
       # @param id [String] Saved object id 
-      # @param options [Object] query params
+      # @param options [Object] query params (:force)
       # @return [Object] Parsed response
-      # params whitelist (:force)
       def delete(id, type, options = {})
+        options = symbolize_keys(options).slice(:force)
+
         request(
           http_method: :delete,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}/#{id}",
@@ -165,10 +173,12 @@ module Kibana
       # @param options [Object] query params
       # @return [Object] Parsed response
       def export(body, options = {})
+        options = symbolize_keys(options).slice()
+
         raw_request(
           http_method: :post,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_export",
-          params: options.slice(),
+          params: options,
           body: body
         )
       end
@@ -178,6 +188,8 @@ module Kibana
       # @param options [Object] query params (:createNewCopies, :overwrite)
       # @return [Object] Parsed response
       def import(body, options = {})
+        options = symbolize_keys(options).slice(:createNewCopies, :overwrite)
+        
         request(
           http_method: :post,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_import",
@@ -191,6 +203,8 @@ module Kibana
       # @param options [Object] query params (:createNewCopies)
       # @return [Object] Parsed response
       def resolve_import_errors(body, options = {})
+        options = symbolize_keys(options).slice(:createNewCopies)
+        
         request(
           http_method: :post,
           endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_resolve_import_errors",
@@ -205,6 +219,7 @@ module Kibana
       # @param options [Object] query params (:savedObjectTypes)
       # @return [Boolean] 
       def exists?(type, id, options)
+        options = symbolize_keys(options).slice(:savedObjectTypes)
         begin
           get_by_id(type, id, options).present?
         rescue ApiExceptions::NotFoundError
@@ -214,6 +229,7 @@ module Kibana
 
       def related_objects(type, id, options = {})
         _validate_type(type)
+
         request(
           http_method: :get,
           endpoint: "#{api_namespace_for_space(@space_id)}/kibana/management/saved_objects/relationships/#{type}/#{id}",
@@ -254,7 +270,7 @@ module Kibana
       # @param parent_type [Symbol] the type of the parent object
       # @return [Array] of saved objects
       def find_orphans(options = {}, parent_type)
-        raise ArgumentError, "options[:type] must be an array of valid types" unless options[:type].is_a? ::Array
+        # raise ArgumentError, "options[:type] must be an array of valid types" unless options[:type].is_a? ::Array
 
         # get all objects
         all_objects = find_all_pages(options)
@@ -289,8 +305,18 @@ module Kibana
 
       private
 
-      def _validate_type(type)
-        raise ArgumentError, "SavedObject type '#{type}' is not valid" unless TYPES.include?(type.to_sym)
+      def _validate_type(types)
+        types = types.is_a?(::Array) ? types : [types]
+        types.each do |type|
+          if !TYPES.include?(type.to_sym)
+            raise ArgumentError, "SavedObject type '#{type}' is not valid"
+          end
+        end
+      end
+
+      def symbolized_keys(obj, *keys)
+        sym_keys = *keys.map(&:to_sym)
+        obj.transform_keys{|k| k.to_sym}.slice(*keys)
       end
 
       def api_namespace_for_space(space_id)

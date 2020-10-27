@@ -88,6 +88,10 @@ module Kibana
           HTTP_NO_CONTENT, HTTP_OK_CODE
         ].include?(response.status)
       end
+
+      def symbolize_keys(object)
+        object.transform_keys{|k| k.to_sym}
+      end
       
     end
   end

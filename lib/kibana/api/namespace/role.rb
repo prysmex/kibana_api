@@ -15,10 +15,11 @@ module Kibana
       # @param body [Object] Role body
       # @return [Object] Parsed response
       def update(id, body)
+        body = symbolize_keys(body)
         request(
           http_method: :put,
           endpoint: "api/security/role/#{id}",
-          body: validate_body(body)
+          body: filter_keys(body)
         )
       end
 
@@ -53,10 +54,10 @@ module Kibana
 
       private
 
-      #req:
-      #optional: metadata(obj), elasticsearch(obj), kibana(array => obj)
-      def validate_body(body)
-        body.slice(:metadata, :elasticsearch, :kibana)
+      def filter_keys(body)
+        body.transform_keys{|k| k.to_sym}.slice(
+          :metadata, :elasticsearch, :kibana
+        )
       end
       
     end
