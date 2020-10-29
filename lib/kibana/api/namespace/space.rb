@@ -1,6 +1,14 @@
 module Kibana
   module API
-    class SpaceClient < Client
+
+    module Space
+      # Proxy method for {SpaceClient}, available in the receiving object
+      def space
+        @space ||= SpaceClient.new(self)
+      end
+    end
+
+    class SpaceClient < BaseClient
 
       FEATURES = [
         :advancedSettings, :indexPatterns, :savedObjectsManagement, :ingestManager,
@@ -120,5 +128,6 @@ module Kibana
       end
       
     end
+    
   end
 end

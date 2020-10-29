@@ -21,10 +21,10 @@ Or install it yourself as:
 Create `config/initializers/kibana.rb` and set your Kibana API credentials.
 
 ```ruby
-Kibana.configure do |config|
-  config.api_host = ENV['KIBANA_API_HOST']
-  config.api_key = ENV['KIBANA_API_KEY']
-end
+Kibana::API.client = Kibana::Transport::Client.new({
+  api_host: ENV['KIBANA_API_HOST'],
+  api_key: ENV['KIBANA_API_KEY']
+})
 ```
 
 Remember to base64-encode the id and api_key provided by Kibana like this: `id:api_key`
@@ -36,7 +36,12 @@ Remember to base64-encode the id and api_key provided by Kibana like this: `id:a
 Kibana::API provides a list of clients that will help you make requests to the REST API. You need to instanciate the client that you require and it will give you access to the methods specified by Kibana.
 
 ```ruby
-saved_object_client = Kibana::API::SavedObjectClient.new or Kibana::API.saved_object_client
+client = Kibana::Transport::Client.new({...})
+
+saved_object_client = client.saved_object
+# or
+saved_object_client = Kibana::API::SavedObjectClient.new(client)
+
 saved_object_client.create("index-pattern", {...})
 ```
 

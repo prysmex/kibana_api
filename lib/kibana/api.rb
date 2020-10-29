@@ -1,5 +1,23 @@
-require_relative 'api/client'
+require_relative 'api/base_client'
+require_relative 'api/namespace/features'
+require_relative 'api/namespace/role'
 require_relative 'api/namespace/saved_object'
 require_relative 'api/namespace/space'
-require_relative 'api/namespace/feature'
-require_relative 'api/namespace/role'
+
+module Kibana
+  module API
+
+    class << self
+      attr_accessor :client
+    end
+
+    def self.included(base)
+      base.send :include,
+                Kibana::API::Features,
+                Kibana::API::Role,
+                Kibana::API::SavedObject,
+                Kibana::API::Space
+    end
+
+  end
+end

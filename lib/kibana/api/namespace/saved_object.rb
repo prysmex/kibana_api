@@ -1,6 +1,14 @@
 module Kibana
   module API
-    class SavedObjectClient < Client
+    
+    module SavedObject
+      # Proxy method for {SavedObjectClient}, available in the receiving object
+      def saved_object
+        @saved_object ||= SavedObjectClient.new(self)
+      end
+    end
+
+    class SavedObjectClient < BaseClient
 
       attr_reader :space_id
 
@@ -169,10 +177,11 @@ module Kibana
       end
 
       # Exports Kibana saved object 
-      # @param body [Object] Saved object body
+      # @param body [Object] Saved object body (:type, :objects, :includeReferencesDeep, :excludeExportDetails)
       # @param options [Object] query params
       # @return [Object] Parsed response
       def export(body, options = {})
+        body = symbolize_keys(body).slice(:type, :objects, :includeReferencesDeep, :excludeExportDetails)
         options = symbolize_keys(options).slice()
 
         raw_request(
@@ -189,13 +198,26 @@ module Kibana
       # @return [Object] Parsed response
       def import(body, options = {})
         options = symbolize_keys(options).slice(:createNewCopies, :overwrite)
-        
-        request(
-          http_method: :post,
-          endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_import",
-          params: options,
-          body: body
-        )
+
+        file = Tempfile.new(['foo', '.ndjson'])
+        begin
+          file.write(body)
+          file.rewind
+          io_file = Faraday::UploadIO.new(file, 'json')
+          request(
+            http_method: :post,
+            endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_import",
+            params: options,
+            body: {
+              file: io_file
+            }
+          ) do |connection|
+            connection.headers = connection.headers.merge({'Content-Type' => 'multipart/form-data'})
+          end
+        ensure
+           file.close
+           file.unlink
+        end
       end
 
       # Resolve import errors from Kibana saved object 
@@ -328,5 +350,6 @@ module Kibana
       end
 
     end
+
   end
 end
