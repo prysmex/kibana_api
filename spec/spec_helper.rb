@@ -12,10 +12,4 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
-  config.before(:all) do
-    Kibana.configure do |config|
-      config.api_host = ENV['KIBANA_API_HOST']
-      config.api_key = ENV['KIBANA_API_KEY']
-    end
-  end
 end

@@ -1,7 +1,15 @@
 module Kibana
   module API
-    class RoleClient < Client
-      
+
+    module Role
+      # Proxy method for {RoleClient}, available in the receiving object
+      def role
+        @role ||= RoleClient.new(self)
+      end
+    end
+
+    class RoleClient < BaseClient
+        
       # Updates a Kibana role 
       # @param id [String] Role id
       # @param body [Object] Role body
@@ -59,7 +67,7 @@ module Kibana
           :metadata, :elasticsearch, :kibana
         )
       end
-      
     end
+
   end
 end
