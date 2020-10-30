@@ -88,7 +88,7 @@ module Kibana
       def exists?(id)
         begin
           get_by_id(id).present?
-        rescue ApiExceptions::NotFoundError
+        rescue Kibana::Transport::ApiExceptions::NotFoundError
           false
         end
       end

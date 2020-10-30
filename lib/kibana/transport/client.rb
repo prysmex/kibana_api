@@ -14,10 +14,13 @@ module Kibana
 
       # Simple wrapper to execute the http method on the connection object
       # use block to customize the connection object
-      def raw_request(http_method:, endpoint:, params: {}, body: {})
+      def raw_request(http_method:, endpoint:, params: {}, body: {}, multipart: false)
+        body = multipart ? body : body.to_json
+
         response = connection.public_send(http_method, endpoint) do |conn|
           conn.params = conn.params.merge(params)
-          conn.body = body.to_json
+          conn.body = body
+          conn.headers = conn.headers.merge({'Content-Type' => 'application/json;charset=UTF-8'}) unless multipart
           yield conn if block_given?
         end
         return response if response_successful?(response)
@@ -26,12 +29,13 @@ module Kibana
   
       # Simple wrapper to execute the http method on the connection object
       # use block to customize the connection object
-      def request(http_method:, endpoint:, params: {}, body: {}, &block)
+      def request(http_method:, endpoint:, params: {}, body: {}, multipart: false, &block)
         response = raw_request({
           http_method: http_method,
           endpoint: endpoint,
           params: params,
-          body: body
+          body: body,
+          multipart: multipart
         }, &block)
         Oj.load(response.body)
       end
@@ -41,6 +45,7 @@ module Kibana
       # Faraday connection object with default configurations
       # this can be configured in a per-request basis by yielding
       # the connection object on the request or raw_request methods
+      # TODO myabe implement this? https://lostisland.github.io/faraday/middleware/multipart
       def connection
         @connection ||= Faraday.new(@api_host, {request: { params_encoder: Faraday::FlatParamsEncoder }}) do |c|
           c.request :multipart
@@ -49,7 +54,7 @@ module Kibana
           # Default Kibana API Headers
           c.headers['kbn-xsrf'] = 'true'
           c.headers['Authorization'] = "ApiKey #{@api_key}"
-          c.headers['Content-Type'] = 'application/json;charset=UTF-8'
+          # c.headers['Content-Type'] = 'application/json;charset=UTF-8'
         end
       end
   

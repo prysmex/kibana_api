@@ -203,17 +203,16 @@ module Kibana
         begin
           file.write(body)
           file.rewind
-          io_file = Faraday::UploadIO.new(file, 'json')
+          io_file = Faraday::FilePart.new(file, 'json')
           request(
             http_method: :post,
             endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_import",
             params: options,
             body: {
               file: io_file
-            }
-          ) do |connection|
-            connection.headers = connection.headers.merge({'Content-Type' => 'multipart/form-data'})
-          end
+            },
+            multipart: true
+          )
         ensure
            file.close
            file.unlink
@@ -244,7 +243,7 @@ module Kibana
         options = symbolize_keys(options).slice(:savedObjectTypes)
         begin
           get_by_id(type, id, options).present?
-        rescue ApiExceptions::NotFoundError
+        rescue Kibana::Transport::ApiExceptions::NotFoundError
           false
         end
       end
