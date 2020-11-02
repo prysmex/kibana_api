@@ -10,7 +10,7 @@ module Kibana
 
     class SavedObjectClient < BaseClient
 
-      attr_reader :space_id
+      include Kibana::API::Spaceable
 
       TYPES = [
         :config,
@@ -31,24 +31,6 @@ module Kibana
         :'inventory-view'
       ].freeze
 
-      # set the space context
-      def with_space(space_id)
-        prev_space = @space_id
-        @space_id = space_id
-        return yield(space_id)
-      ensure
-        @space_id = prev_space
-      end
-
-      # iterate all spaces and set context
-      def each_space(&block)
-        return_value = {}
-        _defined_spaces.each do |space|
-          return_value[space] = with_space(space, &block)
-        end
-        return_value
-      end
-
       # Retrieves a single Kibana saved object 
       # @param id [String] Id of the saved object
       # @param type [String] Type of the saved object
@@ -60,7 +42,7 @@ module Kibana
 
         request(
           http_method: :get,
-          endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}/#{id}",
+          endpoint: "#{current_space_api_namespace}/saved_objects/#{type}/#{id}",
           params: options
         )
       end
@@ -78,7 +60,7 @@ module Kibana
 
         request(
           http_method: :post,
-          endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_bulk_get",
+          endpoint: "#{current_space_api_namespace}/saved_objects/_bulk_get",
           body: body,
           params: options
         )
@@ -95,7 +77,7 @@ module Kibana
 
         request(
           http_method: :get,
-          endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_find",
+          endpoint: "#{current_space_api_namespace}/saved_objects/_find",
           params: options
         )
       end
@@ -111,9 +93,9 @@ module Kibana
         body = symbolize_keys(body).slice(:attributes, :references, :initialNamespaces)
         options = symbolize_keys(options).slice(:overwrite)
         endpoint = if id
-          "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}/#{id}"
+          "#{current_space_api_namespace}/saved_objects/#{type}/#{id}"
         else
-          "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}"
+          "#{current_space_api_namespace}/saved_objects/#{type}"
         end
 
         request(
@@ -137,7 +119,7 @@ module Kibana
 
         request(
           http_method: :post,
-          endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_bulk_create",
+          endpoint: "#{current_space_api_namespace}/saved_objects/_bulk_create",
           params: options,
           body: body
         )
@@ -155,7 +137,7 @@ module Kibana
 
         request(
           http_method: :put,
-          endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}/#{id}",
+          endpoint: "#{current_space_api_namespace}/saved_objects/#{type}/#{id}",
           params: options,
           body: body
         )
@@ -171,7 +153,7 @@ module Kibana
 
         request(
           http_method: :delete,
-          endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/#{type}/#{id}",
+          endpoint: "#{current_space_api_namespace}/saved_objects/#{type}/#{id}",
           params: options
         )
       end
@@ -186,7 +168,7 @@ module Kibana
 
         raw_request(
           http_method: :post,
-          endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_export",
+          endpoint: "#{current_space_api_namespace}/saved_objects/_export",
           params: options,
           body: body
         )
@@ -206,7 +188,7 @@ module Kibana
           io_file = Faraday::FilePart.new(file, 'json')
           request(
             http_method: :post,
-            endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_import",
+            endpoint: "#{current_space_api_namespace}/saved_objects/_import",
             params: options,
             body: {
               file: io_file
@@ -228,7 +210,7 @@ module Kibana
         
         request(
           http_method: :post,
-          endpoint: "#{api_namespace_for_space(@space_id)}/saved_objects/_resolve_import_errors",
+          endpoint: "#{current_space_api_namespace}/saved_objects/_resolve_import_errors",
           params: options,
           body: body
         )
@@ -253,7 +235,7 @@ module Kibana
 
         request(
           http_method: :get,
-          endpoint: "#{api_namespace_for_space(@space_id)}/kibana/management/saved_objects/relationships/#{type}/#{id}",
+          endpoint: "#{current_space_api_namespace}/kibana/management/saved_objects/relationships/#{type}/#{id}",
           params: options
         )
       end
@@ -264,7 +246,7 @@ module Kibana
       def counts(body)
         request(
           http_method: :post,
-          endpoint: "#{api_namespace_for_space(@space_id)}/kibana/management/saved_objects/scroll/counts",
+          endpoint: "#{current_space_api_namespace}/kibana/management/saved_objects/scroll/counts",
           body: body
         )
       end
@@ -313,15 +295,31 @@ module Kibana
 
       # @param [String] title of the index pattern, not the id
       # @return [Object] a hash containing all fields under 'fields' key
-      def index_pattern_fields(pattern)
-        request(
+      def fields_for_index_pattern(pattern, meta_fields=[:_source, :_id, :_type, :_index, :_score])
+        data = request(
           http_method: :get,
           endpoint: '/api/index_patterns/_fields_for_wildcard',
           params: {
             pattern: pattern,
-            meta_fields: [:_source, :_id, :_type, :_index, :_score]
+            meta_fields: meta_fields
           }
         )
+        #add defaults
+        data['fields'] = data['fields'].map do |field|
+          field.merge({'count' => 0, 'scripted' => false})
+        end
+        data
+      end
+
+      def refresh_index_pattern!(id)
+        index_pattern = get_by_id(:'index-pattern', id)
+        current_fields = JSON.parse(index_pattern['attributes']['fields'])
+        scripted_fields = current_fields.select do |f|
+          f['scripted']
+        end
+        new_fields = fields_for_index_pattern(index_pattern['attributes']['title'])['fields']
+        index_pattern['attributes']['fields'] = (scripted_fields + new_fields).to_json
+        update({attributes: index_pattern['attributes']}, :'index-pattern', id)
       end
 
       private
@@ -332,19 +330,6 @@ module Kibana
           if !TYPES.include?(type.to_sym)
             raise ArgumentError, "SavedObject type '#{type}' is not valid"
           end
-        end
-      end
-
-      def symbolized_keys(obj, *keys)
-        sym_keys = *keys.map(&:to_sym)
-        obj.transform_keys{|k| k.to_sym}.slice(*keys)
-      end
-
-      def api_namespace_for_space(space_id)
-        if space_id.nil?
-          "api"
-        else
-          "s/#{space_id}/api"
         end
       end
 
