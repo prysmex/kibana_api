@@ -14,14 +14,14 @@ module Kibana
   
       # Simple wrapper to execute the http method on the connection object
       # use block to customize the connection object
-      def request(http_method:, endpoint:, params: {}, body: {}, raw_body: nil, raw: false, &block)
+      def request(http_method:, endpoint:, params: {}, body: {}, raw_body: nil, raw: false, multipart: false, &block)
 
         body = raw_body ? body : body.to_json
 
         response = connection.public_send(http_method, endpoint) do |conn|
           conn.params = conn.params.merge(params)
           conn.body = body
-          conn.headers = conn.headers.merge({'Content-Type' => 'application/json;charset=UTF-8'}) unless raw
+          conn.headers = conn.headers.merge({'Content-Type' => 'application/json;charset=UTF-8'}) unless multipart
           yield conn if block_given?
         end
 

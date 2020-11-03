@@ -101,7 +101,7 @@ module Kibana
       # Creates a Kibana saved object 
       # @param type [String] Saved object type
       # @param body [Object] Saved object body (:attributes, :references, :initialNamespaces)
-      # @param params [Object] id and query params (:overwrite)
+      # @param params [Object] query params (:overwrite)
       # @return [Object] Parsed response
       def create(type:, body:, params: {}, id: nil, **args)
         _validate_type(type)
@@ -208,7 +208,8 @@ module Kibana
             body: {
               file: io_file
             },
-            raw_body: true
+            raw_body: true,
+            multipart: true
           ))
         ensure
            file.close
@@ -229,7 +230,8 @@ module Kibana
       #     endpoint: "#{current_space_api_namespace}/saved_objects/_resolve_import_errors",
       #     params: params,
       #     body: body,
-      #     raw_body: true
+      #     raw_body: true,
+      #     multipart: true
       #   ))
       # end
 
