@@ -8,12 +8,23 @@ module Kibana
         @client = client
       end
 
-      private
+      # # handle respond_to?
+      # def respond_to_missing?(_method, include_private = false)
+      #   if _method.to_s.sub(/_raw/, '')
+      #     return
+      #   end
+      #   super(_method, include_private)
+      # end
 
-      # delegate
-      def raw_request(**args, &block)
-        client.raw_request(**args, &block)
-      end
+      # # catch missing method
+      # def method_missing(_method, *args, &block)
+      #   if _method.to_s.sub(//)
+      #     return
+      #   end
+      #   super(_method, *args, &block)
+      # end
+
+      private
       
       # delegate
       def request(**args, &block)
