@@ -29,18 +29,15 @@ module Kibana
       end
 
       # Exports a Kibana dashboard
-      # @param body [Object] Role body
       # @param options [Object] query params
       # @return [Object] Parsed response
-      def export(body = {}, options = {})
-        body = symbolize_keys(body).slice()
+      def export(options = {})
         options = symbolize_keys(options).slice(:dashboard)
 
         request(
-          http_method: :put,
+          http_method: :get,
           endpoint: "#{current_space_api_namespace}/kibana/dashboards/export",
-          params: options,
-          body: body
+          params: options
         )
       end
     end

@@ -82,6 +82,24 @@ module Kibana
         )
       end
 
+      # iterates pages for a find request
+      def find_all_pages(options = {}, max_pages = 100)
+        options.reverse_merge!({per_page: 100, fields: []})
+        all_saved_objects = []
+        page = 1
+
+        while page < max_pages  do
+          data = find(options.merge({
+            page: page
+          }))
+          page += 1
+          break if data['saved_objects'].size == 0
+          yield data if block_given?
+          all_saved_objects.concat(data['saved_objects'])
+        end
+        all_saved_objects
+      end
+
       # Creates a Kibana saved object 
       # @param type [String] Saved object type
       # @param body [Object] Saved object body (:attributes, :references, :initialNamespaces)
@@ -158,6 +176,10 @@ module Kibana
         )
       end
 
+      # def delete_by_find
+      #   #TODO
+      # end
+
       # Exports Kibana saved object 
       # @param body [Object] Saved object body (:type, :objects, :includeReferencesDeep, :excludeExportDetails)
       # @param options [Object] query params
@@ -230,6 +252,7 @@ module Kibana
         end
       end
 
+      # savedObjectTypes: [:'index-pattern']
       def related_objects(type, id, options = {})
         _validate_type(type)
 
@@ -249,23 +272,6 @@ module Kibana
           endpoint: "#{current_space_api_namespace}/kibana/management/saved_objects/scroll/counts",
           body: body
         )
-      end
-
-      def find_all_pages(options = {}, max_pages = 100)
-        options.reverse_merge!({per_page: 100, fields: []})
-        all_saved_objects = []
-        page = 1
-
-        while page < max_pages  do
-          data = find(options.merge({
-            page: page
-          }))
-          page += 1
-          break if data['saved_objects'].size == 0
-          yield data if block_given?
-          all_saved_objects.concat(data['saved_objects'])
-        end
-        all_saved_objects
       end
 
       #example to find orphan visualizations find_all_orphans({type: [:visualization], fields: [:title]}, :dashboard)
