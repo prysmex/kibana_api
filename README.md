@@ -75,16 +75,21 @@ Kibana::API.client.saved_object.get(...)
 
 These is the list of the supported API clients:
 
-Kibana::API::FeaturesClient
-Kibana::API::SpaceClient
-Kibana::API::RoleClient
-Kibana::API::DashboardClient
-Kibana::API::SavedObjectClient
+- Kibana::API::FeaturesClient
+- Kibana::API::SpaceClient
+- Kibana::API::RoleClient
+- Kibana::API::DashboardClient
+- Kibana::API::SavedObjectClient
 
 If you want to prevent parsing the response, you can use {raw: true} as a parameter in API method
 
 ```ruby
 Kibana::API.client.saved_object.find({..., raw: true})
+```
+
+Similarly, if you want to prevent the request's body stringification (required by Faraday on json requests), you can pass {raw_body: true}
+```ruby
+Kibana::API.client.saved_object.import({..., raw_body: true})
 ```
 
 Since Kibana is organized into spaces, DashboardClient and SavedObjectClient support setting the space context via block syntax
