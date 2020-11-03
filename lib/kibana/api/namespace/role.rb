@@ -14,59 +14,53 @@ module Kibana
       # @param id [String] Role id
       # @param body [Object] Role body
       # @return [Object] Parsed response
-      def create(id, body)
-        update(id, body)
+      def create(**args)
+        update(**args)
       end
 
       # Updates a Kibana role 
       # @param id [String] Role id
       # @param body [Object] Role body
       # @return [Object] Parsed response
-      def update(id, body)
-        body = symbolize_keys(body)
-        request(
+      def update(id:, body:, **args)
+        body = symbolize_keys(body).slice(:metadata, :elasticsearch, :kibana)
+
+        request(**args.merge(
           http_method: :put,
           endpoint: "api/security/role/#{id}",
-          body: filter_keys(body)
-        )
+          body: body
+        ))
       end
 
       # Gets a Kibana role 
       # @param id [String] Role id
       # @return [Object] Parsed response
-      def get_by_id(id)
-        request(
+      def get_by_id(id:, **args)
+        request(**args.merge(
           http_method: :get,
           endpoint: "api/security/role/#{id}"
-        )
+        ))
       end
 
       # Gets all Kibana roles
       # @return [Object] Parsed response
-      def get_all
-        request(
+      def get_all(**args)
+        request(**args.merge(
           http_method: :get,
           endpoint: "api/security/role"
-        )
+        ))
       end
 
       # Deletes a Kibana role 
       # @param id [String] Role id
       # @return [Object] Parsed response
-      def delete(id)
-        request(
+      def delete(id:, **args)
+        request(**args.merge(
           http_method: :delete,
           endpoint: "api/security/role/#{id}"
-        )
+        ))
       end
 
-      private
-
-      def filter_keys(body)
-        body.transform_keys{|k| k.to_sym}.slice(
-          :metadata, :elasticsearch, :kibana
-        )
-      end
     end
 
   end

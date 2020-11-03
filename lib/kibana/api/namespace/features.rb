@@ -9,11 +9,11 @@ module Kibana
     end
 
     class FeaturesClient < BaseClient
-      def features
-        request(
+      def features(**args)
+        request(**args.merge(
           http_method: :get,
           endpoint: "api/features"
-        )
+        ))
       end 
     end
 

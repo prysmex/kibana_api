@@ -11,11 +11,12 @@ module Kibana
         @api_host = api_host
         @api_key = api_key
       end
-
+  
       # Simple wrapper to execute the http method on the connection object
       # use block to customize the connection object
-      def raw_request(http_method:, endpoint:, params: {}, body: {}, multipart: false)
-        body = multipart ? body : body.to_json
+      def request(http_method:, endpoint:, params: {}, body: {}, raw_body: nil, raw: false, multipart: false, &block)
+
+        body = raw_body ? body : body.to_json
 
         response = connection.public_send(http_method, endpoint) do |conn|
           conn.params = conn.params.merge(params)
@@ -23,21 +24,16 @@ module Kibana
           conn.headers = conn.headers.merge({'Content-Type' => 'application/json;charset=UTF-8'}) unless multipart
           yield conn if block_given?
         end
-        return response if response_successful?(response)
-        raise error_class(response), "Code: #{response.status}, response: #{response.body}"
-      end
-  
-      # Simple wrapper to execute the http method on the connection object
-      # use block to customize the connection object
-      def request(http_method:, endpoint:, params: {}, body: {}, multipart: false, &block)
-        response = raw_request({
-          http_method: http_method,
-          endpoint: endpoint,
-          params: params,
-          body: body,
-          multipart: multipart
-        }, &block)
-        Oj.load(response.body)
+
+        unless response_successful?(response)
+          raise error_class(response), "Code: #{response.status}, response: #{response.body}"
+        end
+
+        if raw
+          response
+        else
+          Oj.load(response.body)
+        end
       end
   
       private

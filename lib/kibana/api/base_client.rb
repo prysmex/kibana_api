@@ -9,11 +9,6 @@ module Kibana
       end
 
       private
-
-      # delegate
-      def raw_request(**args, &block)
-        client.raw_request(**args, &block)
-      end
       
       # delegate
       def request(**args, &block)

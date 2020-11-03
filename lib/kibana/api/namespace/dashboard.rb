@@ -12,36 +12,33 @@ module Kibana
 
       include Kibana::API::Spaceable
 
-      # Updates a Kibana role 
-      # @param id [String] Role id
-      # @param body [Object] Role body
+      # Imports a kibana dashboard
+      # @param body [Object] The payload to be imported
+      # @param params [Object] query params
       # @return [Object] Parsed response
-      def import(id, body)
-        body = symbolize_keys(body).slice(:attributes, :references)
-        options = symbolize_keys(options).slice()
+      def import(body:, params: {}, **args)
+        params = symbolize_keys(params).slice(:force, :exclude)
+        body = symbolize_keys(body).slice(:objects)
 
-        request(
+        request(**args.merge(
           http_method: :put,
           endpoint: "#{current_space_api_namespace}/kibana/dashboards/import",
-          params: options,
+          params: params,
           body: body
-        )
+        ))
       end
 
       # Exports a Kibana dashboard
-      # @param body [Object] Role body
-      # @param options [Object] query params
+      # @param params [Object] query params
       # @return [Object] Parsed response
-      def export(body = {}, options = {})
-        body = symbolize_keys(body).slice()
-        options = symbolize_keys(options).slice(:dashboard)
+      def export(params:, **args)
+        params = symbolize_keys(params).slice(:dashboard)
 
-        request(
-          http_method: :put,
+        request(**args.merge(
+          http_method: :get,
           endpoint: "#{current_space_api_namespace}/kibana/dashboards/export",
-          params: options,
-          body: body
-        )
+          params: params
+        ))
       end
     end
 
