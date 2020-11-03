@@ -31,59 +31,133 @@ Remember to base64-encode the id and api_key provided by Kibana like this: `id:a
 
 ## Usage
 
-### Importing the client
+### Transport client
+
+Kibana::Transport::Client class is used to connect to your kibana instance. To instantiate a new client, simply pass
+your api_host and api_key.
+
+```ruby
+transport_client = Kibana::Transport::Client.new(api_host: ENV['some_host'], api_key: ENV['some_host'])
+```
+
+In order to keep referencing to your same kibana client instance, save it in the Kibana::API module
+```ruby
+Kibana::API.client = transport_client
+
+# now you can always access it
+Kibana::API.client
+```
+
+### Accessing the API clients
 
 Kibana::API provides a list of clients that will help you make requests to the REST API. You need to instanciate the client that you require and it will give you access to the methods specified by Kibana.
 
+Faraday is used as the HTTP library.
+
+Let's do an example with the SavedObjectClient.
+
 ```ruby
-client = Kibana::Transport::Client.new({...})
-
-saved_object_client = client.saved_object
-# or
-saved_object_client = Kibana::API::SavedObjectClient.new(client)
-
-saved_object_client.create("index-pattern", {...})
+saved_object_client = Kibana::API::SavedObjectClient.new(transport_client)
+saved_object_client.create(...) #create a new saved object!
 ```
 
+In order to make it easier to create an manage references to created API clients, there is a shorhand for this.
+```ruby
+# this also creates a new saved object and stores the SavedObjectClient instance reference for future use!
+transport_client.saved_object.create(...)
+transport_client.saved_object.update(...)
+
+#of course, you also can use your previously stored client
+Kibana::API.client.saved_object.get(...)
+```
+
+### API clients
+
+These is the list of the supported API clients:
+
+Kibana::API::FeaturesClient
+Kibana::API::SpaceClient
+Kibana::API::RoleClient
+Kibana::API::DashboardClient
+Kibana::API::SavedObjectClient
+
+If you want to prevent parsing the response, you can use {raw: true} as a parameter in API method
+
+```ruby
+Kibana::API.client.saved_object.find({..., raw: true})
+```
+
+Since Kibana is organized into spaces, DashboardClient and SavedObjectClient support setting the space context via block syntax
+
+```ruby
+# to default space
+Kibana::API.client.saved_object.find(...)
+
+# with a specified space
+Kibana::API.client.saved_object.with_space('your_awesome_space') do |saved_object_client|
+  # all methods are scoped to your_awesome_space
+  saved_object_client.find(...)
+  saved_object_client.create(...)
+
+  #you can nest the context!
+  Kibana::API.client.saved_object.with_space('your_awesome_space') do |other_client|
+    other_client.find(...)
+  end
+
+  #still on your_awesome_space context
+  saved_object_client.create(...)
+end
+```
+
+
+### Detailed method list
+
+- [Kibana::API::FeaturesClient](https://www.elastic.co/guide/en/kibana/master/features-api-get.html)
+  - `features`
+
 - [Kibana::API::SpaceClient](https://www.elastic.co/guide/en/kibana/master/spaces-api.html)
-  - `create(body)` 
-  - `update(id, body)`
-  - `get_by_id(id)`
+  - `create` 
+  - `update`
+  - `get_by_id`
   - `get_all`
-  - `delete(id)`
+  - `delete`
+  - `exists?`
   - `copy_saved_objects_to_space TODO`
   - `resolve_copy_to_space_conflicts TODO`
 
-- [Kibana::API::SavedObjectClient](https://www.elastic.co/guide/en/kibana/master/saved-objects-api.html)
-  - `get_by_id(type, id, options)`
-  - `bulk_get(params, options)`
-  - `find(options)`
-  - `create(type, body, options)` 
-  - `bulk_create(body, options)`
-  - `update(body, type, id, options)`
-  - `delete(id, type, options)`
-  - `export(body, options)`
-  - `import(body, options)`
-  - `resolve_import_errors(body, options)`
-  - `exists?(type, id, options)`
-  - `related_objects(type, id, options)`
-  - `counts(body)`
-  - `find_all_pages(body)`
-  - `find_orphans(body, parent_type)`
-
 - [Kibana::API::RoleClient](https://www.elastic.co/guide/en/kibana/master/role-management-api.html)
-  - `create(id, body)` 
-  - `update(id, body)`
-  - `get_by_id(id)`
+  - `create`
+  - `update`
+  - `get_by_id`
   - `get_all`
-  - `delete(id)`
+  - `delete`
 
-- [Kibana::API::FeatureClient](https://www.elastic.co/guide/en/kibana/master/role-management-api.html)
-  - `features`
+- [Kibana::API::DashboardClient](https://www.elastic.co/guide/en/kibana/master/dashboard-api.html)
+  - `export`
+  - `import`
+
+- [Kibana::API::SavedObjectClient](https://www.elastic.co/guide/en/kibana/master/saved-objects-api.html)
+  - `get`
+  - `bulk_get`
+  - `find`
+  - `find_each_page`
+  - `create`
+  - `bulk_create`
+  - `update`
+  - `delete`
+  - `export`
+  - `import`
+  - `resolve_import_errors TODO`
+  - `exists?`
+  - `related_objects`
+  - `counts`
+  - `find_orphans`
+  - `fields_for_index_pattern`
+  - `refresh_index_pattern`
 
 ### Notes
 
-There are still missing some clients and methods, but it has the essentials to get started with the integration.
+There are still some missing methods, but it has the essentials to get started with the integration.
 
 ## Development
 

@@ -35,7 +35,7 @@ module Kibana
       # Gets a Kibana role 
       # @param id [String] Role id
       # @return [Object] Parsed response
-      def get(id:, **args)
+      def get_by_id(id:, **args)
         request(**args.merge(
           http_method: :get,
           endpoint: "api/security/role/#{id}"

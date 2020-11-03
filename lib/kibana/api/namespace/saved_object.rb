@@ -79,7 +79,8 @@ module Kibana
       end
 
       # iterates pages for a find request, yields a block to give access to response
-      def find_all_pages(params:, max_pages: 100, **args)
+      # should this use the scroll api?
+      def find_each_page(params:, max_pages: 100, **args)
         params.reverse_merge!({per_page: 100, fields: []})
         page = 1
         data_array = []
@@ -88,11 +89,11 @@ module Kibana
           data = find(**args.merge({
             params: params.merge({page: page})
           }))
-          parsed_data = data.is_a? Hash ? data : JSON.parse(data)
+          parsed_data = data.is_a?(::Hash) ? data : JSON.parse(data)
           page += 1
           break if parsed_data['saved_objects'].size == 0
           yield(data, parsed_data) if block_given?
-          data_array.concat(data)
+          data_array.push(data)
         end
 
         data_array
@@ -278,15 +279,15 @@ module Kibana
       # @param parent_type [Symbol] the type of the parent object
       # @return [Array] of saved objects
       def find_orphans(params: {}, parent_type:)
-        raise ArgumentError, "params[:type] must be an array of valid types" unless params[:type].is_a? ::Array
+        raise ArgumentError, "params[:type] must be an array of valid types" unless params[:type].is_a?(::Array)
 
         # get all objects
-        all_objects = find_all_pages({params: params}).map do |resp|
+        all_objects = find_each_page({params: params}).map do |resp|
           resp['saved_objects']
         end.flatten
 
         #get all parents
-        all_parents = find_all_pages({params: {type: [parent_type]}}).map do |resp|
+        all_parents = find_each_page({params: {type: [parent_type]}}).map do |resp|
           resp['saved_objects']
         end.flatten
 
