@@ -274,7 +274,7 @@ module Kibana
         ))
       end
 
-      #example to find orphan visualizations find_all_orphans({type: [:visualization], fields: [:title]}, :dashboard)
+      #example to find orphan visualizations find_all_orphans(params: {type: [:visualization], fields: [:title]}, parent_type: :dashboard)
       # @param params [Object] find params (same whitelist as find method)
       # @param parent_type [Symbol] the type of the parent object
       # @return [Array] of saved objects
