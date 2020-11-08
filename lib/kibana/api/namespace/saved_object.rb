@@ -326,7 +326,7 @@ module Kibana
       end
 
       def refresh_index_pattern!(id)
-        index_pattern = get(:'index-pattern', id)
+        index_pattern = get(type: :'index-pattern', id: id)
         current_fields = JSON.parse(index_pattern['attributes']['fields'])
         scripted_fields = current_fields.select do |f|
           f['scripted']
