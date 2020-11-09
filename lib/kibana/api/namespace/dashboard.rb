@@ -21,7 +21,7 @@ module Kibana
         body = symbolize_keys(body).slice(:objects)
 
         request(**args.merge(
-          http_method: :put,
+          http_method: :post,
           endpoint: "#{current_space_api_namespace}/kibana/dashboards/import",
           params: params,
           body: body
