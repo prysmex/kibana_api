@@ -83,7 +83,7 @@ module Kibana
       end
 
       # Check presence of space
-      # @param id [String] Saved object id 
+      # @param id [String] Space id
       # @return [Boolean] 
       def exists?(id)
         begin
@@ -96,7 +96,48 @@ module Kibana
       # TODO Copy saved objects to space
       # TODO Resolve copy to space conflicts
 
+      # In some cases (like a recently created space) this method
+      # might return nil, it returns the 'largest' version of a config
+      # object, not necessarily the one for the latest Kibana version
+      # @param id [String] Space id
+      # @return [Object|nil] latest config saved object or nil
+      def get_latest_config(id)
+        data = client.saved_object.with_space(id) do |c|
+          c.find( {params: {type: [:'config']}} )
+        end
+        data['saved_objects'].max_by do |object|
+          semantic_version_to_f(object['id'])
+        end
+      end
+
+      # @param source_space [String] id of source space
+      # @param to_spaces [String] id of target space
+      # @param objects [Array] [{"type":"config","id":"7.9.3"}]
+      # @param includeReferences [Boolean]
+      # @param overwrite [Boolean]
+      # @return [Object] results from every spaces {test_space: {success: true, successCount: 1}}
+      def copy_saved_objects_to_spaces(source_space:, target_spaces:, objects:, includeReferences: true, overwrite: true)
+        request(
+          http_method: :post,
+          endpoint: "/s/#{source_space}/api/spaces/_copy_saved_objects",
+          body: {
+            'objects': objects,
+            'spaces': target_spaces,
+            'includeReferences': includeReferences,
+            'overwrite': overwrite
+          }
+        )
+      end
+
       private
+
+      def semantic_version_to_f(version)
+        version = version.sub(/\A[^\d]/, '') #remove first character if not digit
+        version.split('.').map(&:to_i)
+                .each_with_index
+                .reduce(0){ |sum,arr| sum + (arr[0] / 100.0 ** arr[1]) }
+                .round(4)
+      end
 
       def validate_required(body)
         raise ArgumentError, "Required argument 'id' missing" unless body[:id]

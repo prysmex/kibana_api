@@ -129,6 +129,8 @@ end
   - `exists?`
   - `copy_saved_objects_to_space TODO`
   - `resolve_copy_to_space_conflicts TODO`
+  - `get_current_config`
+  - `copy_saved_objects_to_spaces`
 
 - [Kibana::API::RoleClient](https://www.elastic.co/guide/en/kibana/master/role-management-api.html)
   - `create`
