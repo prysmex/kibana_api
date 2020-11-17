@@ -1,8 +1,7 @@
 module Kibana
   module Utils
 
-    def self.build_dashboard(title, space, options = {})
-      namespaces = options.delete(:namespaces) || [space]
+    def self.build_dashboard(title, options = {})
       references = options.delete(:references) || []
       description = options.delete(:description) || ''
       panelsJSON = options.delete(:panelsJSON) || {}
@@ -11,7 +10,6 @@ module Kibana
 
       options.merge({
         type: 'dashboard',
-        namespaces: namespaces,
         references: references,
         attributes: {
           title: title,
@@ -24,7 +22,7 @@ module Kibana
       })
     end
 
-    def self.build_index_pattern(pattern, date_field, fields, space, api_host, options = {})
+    def self.build_index_pattern(pattern, date_field, fields, api_host, options = {})
 
       scripted_fields = fields.select{|f| f['scripted'] || f[:scripted] }
 
@@ -58,10 +56,7 @@ module Kibana
           fields: fields.to_json,
           fieldFormatMap: field_format_map.to_json #only applies when scripted fields are present
         },
-        references: [],
-        namespaces: [
-          space
-        ]
+        references: []
       })
     end
     
