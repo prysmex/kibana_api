@@ -81,7 +81,7 @@ module Kibana
       # iterates pages for a find request, yields a block to give access to response
       # should this use the scroll api?
       def find_each_page(params:, max_pages: 100, **args)
-        params.reverse_merge!({per_page: 100, fields: []})
+        params.reverse_merge!({per_page: 100})
         page = 1
         data_array = []
 

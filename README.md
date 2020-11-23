@@ -147,7 +147,7 @@ end
   - `get`
   - `bulk_get`
   - `find`
-  - `find_each_page`
+  - `find_each_page` ToDo: Use scroll API
   - `create`
   - `bulk_create`
   - `update`
