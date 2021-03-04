@@ -4,7 +4,8 @@ module Kibana
     module Role
       # Proxy method for {RoleClient}, available in the receiving object
       def role
-        @role ||= RoleClient.new(self)
+        # Thread.current['role_client'] ||= RoleClient.new(self)
+        @role = RoleClient.new(self)
       end
     end
 

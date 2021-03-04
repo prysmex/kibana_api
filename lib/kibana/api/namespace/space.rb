@@ -4,7 +4,8 @@ module Kibana
     module Space
       # Proxy method for {SpaceClient}, available in the receiving object
       def space
-        @space ||= SpaceClient.new(self)
+        # Thread.current['space_client'] ||= SpaceClient.new(self)
+        @space = SpaceClient.new(self)
       end
     end
 

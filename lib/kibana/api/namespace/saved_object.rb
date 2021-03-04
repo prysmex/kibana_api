@@ -4,7 +4,8 @@ module Kibana
     module SavedObject
       # Proxy method for {SavedObjectClient}, available in the receiving object
       def saved_object
-        @saved_object ||= SavedObjectClient.new(self)
+        # Thread.current['saved_object_client'] ||= SavedObjectClient.new(self)
+        @saved_object = SavedObjectClient.new(self)
       end
     end
 

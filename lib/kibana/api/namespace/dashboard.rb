@@ -4,7 +4,8 @@ module Kibana
     module Dashboard
       # Proxy method for {DashboardClient}, available in the receiving object
       def dashboard
-        @dashboard ||= DashboardClient.new(self)
+        # Thread.current['dashboard_client'] ||= DashboardClient.new(self)
+        @dashboard = DashboardClient.new(self)
       end
     end
 

@@ -4,7 +4,8 @@ module Kibana
     module Features
       # Proxy method for {FeaturesClient}, available in the receiving object
       def features
-        @features ||= FeaturesClient.new(self)
+        # Thread.current['features_client'] ||= FeaturesClient.new(self)
+        @features = FeaturesClient.new(self)
       end
     end
 
