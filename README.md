@@ -80,6 +80,7 @@ These is the list of the supported API clients:
 - Kibana::API::RoleClient
 - Kibana::API::DashboardClient
 - Kibana::API::SavedObjectClient
+- Kibana::API::CanvasClient
 
 If you want to prevent parsing the response, you can use {raw: true} as a parameter in API method
 
@@ -161,6 +162,9 @@ end
   - `find_orphans`
   - `fields_for_index_pattern`
   - `refresh_index_pattern`
+
+- [Kibana::API::CanvasClient](https://www.elastic.co/guide/en/kibana/master/saved-objects-api.html)
+  - `find`
 
 ### Notes
 
