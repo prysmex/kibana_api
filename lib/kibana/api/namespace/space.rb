@@ -12,18 +12,20 @@ module Kibana
     class SpaceClient < BaseClient
 
       FEATURES = [
-        :advancedSettings, :indexPatterns, :savedObjectsManagement, :ingestManager,
-        :monitoring, :siem, :uptime, :apm, :logs, :infrastructure, :ml, :enterpriseSearch,
-        :discover, :visualize, :dashboard, :canvas, :maps, :dev_tools, :graph
+        :siem, :logs, :infrastructure, :apm, :uptime, :enterpriseSearch,
+        :dev_tools, :advancedSettings, :indexPatterns, :savedObjectsManagement,
+        :savedObjectsTagging, :fleet, :actions, :stackAlerts, :monitoring,
+        :discover, :dashboard, :canvas, :maps, :ml, :visualize
       ].freeze
 
       # BODY_TEMPLATE = {
-        # id: nil,
-        # name: nil,
-        # description: nil,
-        # initials: nil, # two letters
-        # color: nil,
-        # disabledFeatures: []
+      #   "id": "marketing",
+      #   "name": "Marketing",
+      #   "description" : "This is the Marketing Space",
+      #   "color": "#aabbcc",
+      #   "initials": "MK",
+      #   "disabledFeatures": [],
+      #   "imageUrl": ""
       # }
       
       # Creates a Kibana space
@@ -117,7 +119,7 @@ module Kibana
       # @param includeReferences [Boolean]
       # @param overwrite [Boolean]
       # @return [Object] results from every spaces {test_space: {success: true, successCount: 1}}
-      def copy_saved_objects_to_spaces(source_space:, target_spaces:, objects:, includeReferences: true, overwrite: true)
+      def copy_saved_objects_to_spaces(source_space:, target_spaces:, objects:, includeReferences: true, overwrite: true, createNewCopies: false)
         request(
           http_method: :post,
           endpoint: "/s/#{source_space}/api/spaces/_copy_saved_objects",
@@ -125,7 +127,8 @@ module Kibana
             'objects': objects,
             'spaces': target_spaces,
             'includeReferences': includeReferences,
-            'overwrite': overwrite
+            'overwrite': overwrite,
+            'createNewCopies': createNewCopies
           }
         )
       end
