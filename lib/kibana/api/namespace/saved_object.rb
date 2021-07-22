@@ -14,6 +14,7 @@ module Kibana
       include Kibana::API::Spaceable
 
       TYPES = [
+        :tag,
         :config,
         :'index-pattern',
         :visualization,
@@ -173,9 +174,15 @@ module Kibana
         ))
       end
 
-      # def delete_by_find
-      #   #TODO
-      # end
+      # Deletes all objects that match
+      # Accepts same arguments as #find
+      def delete_by_find(**args)
+        find_each_page(**args) do |data|
+          data['saved_objects'].each do |saved_object|
+            delete(id: saved_object['id'], type: saved_object['type'])
+          end
+        end
+      end
 
       # Exports Kibana saved object 
       # @param body [Object] Saved object body (:type, :objects, :includeReferencesDeep, :excludeExportDetails)
