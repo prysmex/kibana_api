@@ -7,5 +7,5 @@
 /spec/reports/
 /tmp/
 
-# rspec failure tracking
-.rspec_status
+# Ignore Byebug command history file.
+.byebug_history

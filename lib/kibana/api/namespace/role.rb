@@ -10,20 +10,16 @@ module Kibana
     end
 
     class RoleClient < BaseClient
-        
-      # Updates a Kibana role 
-      # @param id [String] Role id
-      # @param body [Object] Role body
-      # @return [Object] Parsed response
-      def create(**args)
-        update(**args)
-      end
 
-      # Updates a Kibana role 
+      # Updates a Kibana role
+      #
       # @param id [String] Role id
       # @param body [Object] Role body
-      # @return [Object] Parsed response
-      def update(id:, body:, **args)
+      #   @option body [Hash] :metadata
+      #   @option body [Hash] :elasticsearch
+      #   @option body [Array] :kibana
+      # @return [NilClass]
+      def put(id:, body:, **args)
         body = symbolize_keys(body).slice(:metadata, :elasticsearch, :kibana)
 
         request(**args.merge(
@@ -33,9 +29,10 @@ module Kibana
         ))
       end
 
-      # Gets a Kibana role 
+      # Gets a Kibana role
+      #
       # @param id [String] Role id
-      # @return [Object] Parsed response
+      # @return [Hash]
       def get_by_id(id:, **args)
         request(**args.merge(
           http_method: :get,
@@ -44,7 +41,8 @@ module Kibana
       end
 
       # Gets all Kibana roles
-      # @return [Object] Parsed response
+      #
+      # @return [Array]
       def get_all(**args)
         request(**args.merge(
           http_method: :get,
@@ -52,9 +50,10 @@ module Kibana
         ))
       end
 
-      # Deletes a Kibana role 
+      # Deletes a Kibana role
+      #
       # @param id [String] Role id
-      # @return [Object] Parsed response
+      # @return [NilClass]
       def delete(id:, **args)
         request(**args.merge(
           http_method: :delete,

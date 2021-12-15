@@ -13,14 +13,17 @@ module Kibana
       include Kibana::API::Spaceable
 
       # Retrieves multiple paginated Kibana canvas
-      # @param params [Object] query params (:per_page)
-      # @return [Object] Parsed response
+      #
+      # @param [Hash] params query params
+      #   @option params [Integer] :perPage
+      #   @option params [NilClass,String] :name
+      # @return [Hash]
       def find(params:, **args)
-        params = symbolize_keys(params).slice(:per_page)
+        params = symbolize_keys(params).slice(:perPage, :name)
 
         request(**args.merge(
           http_method: :get,
-          endpoint: "#{current_space_api_namespace}canvas/workpad/find",
+          endpoint: "#{current_space_api_namespace}/canvas/workpad/find",
           params: params
         ))
       end

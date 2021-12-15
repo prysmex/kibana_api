@@ -75,12 +75,12 @@ Kibana::API.client.saved_object.get(...)
 
 These is the list of the supported API clients:
 
-- Kibana::API::FeaturesClient
-- Kibana::API::SpaceClient
-- Kibana::API::RoleClient
-- Kibana::API::DashboardClient
-- Kibana::API::SavedObjectClient
 - Kibana::API::CanvasClient
+- Kibana::API::DashboardClient
+- Kibana::API::FeaturesClient
+- Kibana::API::RoleClient
+- Kibana::API::SavedObjectClient
+- Kibana::API::SpaceClient
 
 If you want to prevent parsing the response, you can use {raw: true} as a parameter in API method
 
@@ -118,20 +118,15 @@ end
 
 ### Detailed method list
 
+- [Kibana::API::CanvasClient](https://www.elastic.co/guide/en/kibana/master/saved-objects-api.html)
+  - `find`
+
+- [Kibana::API::DashboardClient](https://www.elastic.co/guide/en/kibana/master/dashboard-api.html)
+  - `export`
+  - `import`
+
 - [Kibana::API::FeaturesClient](https://www.elastic.co/guide/en/kibana/master/features-api-get.html)
   - `features`
-
-- [Kibana::API::SpaceClient](https://www.elastic.co/guide/en/kibana/master/spaces-api.html)
-  - `create` 
-  - `update`
-  - `get_by_id`
-  - `get_all`
-  - `delete`
-  - `exists?`
-  - `copy_saved_objects_to_space TODO`
-  - `resolve_copy_to_space_conflicts TODO`
-  - `get_current_config`
-  - `copy_saved_objects_to_spaces`
 
 - [Kibana::API::RoleClient](https://www.elastic.co/guide/en/kibana/master/role-management-api.html)
   - `create`
@@ -139,10 +134,6 @@ end
   - `get_by_id`
   - `get_all`
   - `delete`
-
-- [Kibana::API::DashboardClient](https://www.elastic.co/guide/en/kibana/master/dashboard-api.html)
-  - `export`
-  - `import`
 
 - [Kibana::API::SavedObjectClient](https://www.elastic.co/guide/en/kibana/master/saved-objects-api.html)
   - `get`
@@ -161,10 +152,18 @@ end
   - `counts`
   - `find_orphans`
   - `fields_for_index_pattern`
-  - `refresh_index_pattern`
 
-- [Kibana::API::CanvasClient](https://www.elastic.co/guide/en/kibana/master/saved-objects-api.html)
-  - `find`
+- [Kibana::API::SpaceClient](https://www.elastic.co/guide/en/kibana/master/spaces-api.html)
+  - `create` 
+  - `update`
+  - `get_by_id`
+  - `get_all`
+  - `delete`
+  - `exists?`
+  - `copy_saved_objects_to_space TODO`
+  - `resolve_copy_to_space_conflicts TODO`
+  - `get_current_config`
+  - `copy_saved_objects_to_spaces`
 
 ### Notes
 

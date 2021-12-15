@@ -10,6 +10,10 @@ module Kibana
     end
 
     class FeaturesClient < BaseClient
+      
+      # Returns the Kibana features
+      #
+      # @return [Array]
       def features(**args)
         request(**args.merge(
           http_method: :get,

@@ -2,6 +2,7 @@ module Kibana
   module Transport
     class Client
   
+      include Kibana::API
       include HttpStatusCodes
       include ApiExceptions
   

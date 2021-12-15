@@ -1,41 +1,52 @@
 PATH
   remote: .
   specs:
-    kibana (0.1.0)
+    kibana (0.1.20)
+      activesupport (~> 6)
+      faraday (= 1.0.1)
+      oj (= 3.10.13)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    diff-lcs (1.4.4)
+    activesupport (6.1.4.1)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      tzinfo (~> 2.0)
+      zeitwerk (~> 2.3)
+    ansi (1.5.0)
+    builder (3.2.4)
+    byebug (9.1.0)
+    concurrent-ruby (1.1.9)
     faraday (1.0.1)
       multipart-post (>= 1.2, < 3)
+    i18n (1.8.11)
+      concurrent-ruby (~> 1.0)
+    minitest (5.14.4)
+    minitest-reporters (1.4.3)
+      ansi
+      builder
+      minitest (>= 5.0)
+      ruby-progressbar
     multipart-post (2.1.1)
     oj (3.10.13)
-    rake (10.5.0)
-    rspec (3.9.0)
-      rspec-core (~> 3.9.0)
-      rspec-expectations (~> 3.9.0)
-      rspec-mocks (~> 3.9.0)
-    rspec-core (3.9.2)
-      rspec-support (~> 3.9.3)
-    rspec-expectations (3.9.2)
-      diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.9.0)
-    rspec-mocks (3.9.1)
-      diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.9.0)
-    rspec-support (3.9.3)
+    rake (13.0.6)
+    ruby-progressbar (1.11.0)
+    tzinfo (2.0.4)
+      concurrent-ruby (~> 1.0)
+    zeitwerk (2.5.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.17)
-  faraday
+  bundler (= 2.1.4)
+  byebug (~> 9.1.0)
   kibana!
-  oj
-  rake (~> 10.0)
-  rspec (~> 3.0)
+  minitest (>= 5.14)
+  minitest-reporters (>= 1.4)
+  rake (~> 13.0)
 
 BUNDLED WITH
-   1.17.3
+   2.1.4

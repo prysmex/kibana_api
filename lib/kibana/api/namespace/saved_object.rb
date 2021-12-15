@@ -34,10 +34,11 @@ module Kibana
       ].freeze
 
       # Retrieves a single Kibana saved object 
-      # @param id [String] Id of the saved object
-      # @param type [String] Type of the saved object
-      # @param params [Object] query params
-      # @return [Object] Parsed response
+      #
+      # @param id [String]
+      # @param type [String]
+      # @param params [Hash] query params
+      # @return [Hash]
       def get(type:, id:, **args)
         _validate_type(type)
 
@@ -47,10 +48,15 @@ module Kibana
         ))
       end
 
-      # Retrieves multiple Kibana saved object 
-      # @param body [Array] Array of query objects (:type, :id, :fields)
-      # @param params [Object] query params
-      # @return [Object] Parsed response
+      # Retrieves multiple Kibana saved objects
+      #
+      # @param body [Array<Hash>]
+      #   @option body[] [String] :type
+      #   @option body[] [String] :id
+      #   @option body[] [Array<String>] :fields
+      #   @option body[] [Array<String>] :namespaces
+      # @param params [Hash] query params
+      # @return [Hash]
       def bulk_get(body:, **args)
         body = body.map do |obj|
           _validate_type(obj[:type])
@@ -64,9 +70,21 @@ module Kibana
         ))
       end
 
-      # Retrieves multiple paginated Kibana saved objects
-      # @param params [Object] query params (:type, :per_page, :page, :search, :default_search_operator, :search_fields, :fields, :sort_field, :has_reference, :filter)
-      # @return [Object] Parsed response
+      # Retrieves paginated Kibana saved objects
+      #
+      # @param params [Hash] query params
+      #   @option params [String] :type
+      #   @option params [Integer] :per_page
+      #   @option params [Integer] :page
+      #   @option params [String] :search
+      #   @option params [String] :default_search_operator
+      #   @option params [Array] :search_fields
+      #   @option params [Array] :fields
+      #   @option params [String] :sort_field
+      #   @option params [Hash] :has_reference, type and ID
+      #   @option params [String] :filter
+      #   @option params [String] :aggs
+      # @return [Hash]
       def find(params:, **args)
         params = symbolize_keys(params).slice(
           :type, :per_page, :page, :search, :default_search_operator, :search_fields, :fields, :sort_field, :has_reference, :filter
@@ -80,8 +98,13 @@ module Kibana
         ))
       end
 
-      # iterates pages for a find request, yields a block to give access to response
-      # should this use the scroll api?
+      # Iterates pages for a find request, yields a block to give access to response
+      #
+      # @Todo use the scroll api
+      #
+      # @param params (same as #find)
+      # @param max_pages [Integer]
+      # @return [Array]
       def find_each_page(params:, max_pages: 100, **args)
         params.reverse_merge!({per_page: 100})
         page = 1
@@ -101,11 +124,17 @@ module Kibana
         data_array
       end
 
-      # Creates a Kibana saved object 
-      # @param type [String] Saved object type
-      # @param body [Object] Saved object body (:attributes, :references, :initialNamespaces)
-      # @param params [Object] query params (:overwrite)
-      # @return [Object] Parsed response
+      # Creates a Kibana saved object
+      #
+      # @param type [String]
+      # @param body [Hash]
+      #   @option body [Hash] :attributes
+      #   @option body [Array<Hash>] :references
+      #   @option body [Array<String>] :initialNamespaces
+      # @param params [Hash] query params
+      #   @option params [Boolean] :overwrite
+      # @param id [String]
+      # @return [Hash]
       def create(type:, body:, params: {}, id: nil, **args)
         _validate_type(type)
         body = symbolize_keys(body).slice(:attributes, :references, :initialNamespaces)
@@ -124,10 +153,18 @@ module Kibana
         ))
       end
 
-      # Creates multiple Kibana saved object 
-      # @param body [Array] Array of saved objects (:type, :id, :attributes, :references, :initialNamespaces, :version)
-      # @param params [Object] query params (:overwrite)
-      # @return [Object] Parsed response
+      # Creates multiple Kibana saved object
+      #
+      # @param body [Array] Array of saved objects
+      #   @option body[] [String] :type
+      #   @option body[] [String] :id
+      #   @option body[] [Hash] :attributes
+      #   @option body[] [Array<Hash>] :references
+      #   @option body[] [Array<String>] :initialNamespaces
+      #   @option body[] [Integer] :version
+      # @param params [Hash]
+      #   @option params [Boolean] :overwrite
+      # @return [Hash] containing 'saved_objects' key
       def bulk_create(body:, params: {}, **args)
         body = body.map do |obj|
           _validate_type(obj[:type])
@@ -143,14 +180,18 @@ module Kibana
         ))
       end
 
-      # Updates a Kibana saved object 
-      # @param body [Object] Saved object body (:attributes, :references)
-      # @param type [String] Saved object type
-      # @param id [String] Saved object id 
-      # @param params [Object] query params
-      # @return [Object] Parsed response
+      # Updates a Kibana saved object
+      #
+      # @param type [String]
+      # @param id [String]
+      # @param body [Hash] Saved object body
+      #   @option body [Hash] :attributes
+      #   @option body [Array] :references
+      #   @option body [] :upsert
+      # @param params [Hash] query params
+      # @return [Hash]
       def update(type:, id:, body:, **args)
-        body = symbolize_keys(body).slice(:attributes, :references)
+        body = symbolize_keys(body).slice(:attributes, :references, :upsert)
 
         request(**args.merge(
           http_method: :put,
@@ -159,11 +200,13 @@ module Kibana
         ))
       end
 
-      # Deletes a Kibana saved object 
-      # @param type [String] Saved object type
-      # @param id [String] Saved object id 
-      # @param params [Object] query params (:force)
-      # @return [Object] Parsed response
+      # Deletes a Kibana saved object
+      #
+      # @param type [String]
+      # @param id [String]
+      # @param params [Hash] query params
+      #   @option params [Boolean] :force
+      # @return [NilClass]
       def delete(id:, type:, params: {}, **args)
         params = symbolize_keys(params).slice(:force)
 
@@ -175,7 +218,9 @@ module Kibana
       end
 
       # Deletes all objects that match
-      # Accepts same arguments as #find
+      # @note Accepts same arguments as #find
+      #
+      # @return [void]
       def delete_by_find(**args)
         find_each_page(**args) do |data|
           data['saved_objects'].each do |saved_object|
@@ -184,9 +229,14 @@ module Kibana
         end
       end
 
-      # Exports Kibana saved object 
-      # @param body [Object] Saved object body (:type, :objects, :includeReferencesDeep, :excludeExportDetails)
-      # @return [Object] Parsed response
+      # Exports Kibana saved object
+      #
+      # @param body [Hash] Saved object body
+      #   @option body [Array] :type
+      #   @option body [Array] :objects
+      #   @option body [Boolean] :includeReferencesDeep
+      #   @option body [Boolean] :excludeExportDetails
+      # @return [Hash]
       def export(body:, **args)
         body = symbolize_keys(body).slice(:type, :objects, :includeReferencesDeep, :excludeExportDetails)
 
@@ -198,10 +248,13 @@ module Kibana
         ))
       end
 
-      # Imports Kibana saved object 
-      # @param body [Object] Saved object body
-      # @param params [Object] query params (:createNewCopies, :overwrite)
-      # @return [Object] Parsed response
+      # Imports Kibana saved object
+      #
+      # @param body [Hash]
+      # @param params [Hash] query params
+      #   @option params [Boolean] :createNewCopies
+      #   @option params [Boolean] :overwrite
+      # @return [Hash]
       def import(body:, params: {}, **args)
         params = symbolize_keys(params).slice(:createNewCopies, :overwrite)
 
@@ -226,10 +279,12 @@ module Kibana
         end
       end
 
-      # Resolve import errors from Kibana saved object 
-      # @param body [Object] Saved object body
-      # @param params [Object] query params (:createNewCopies)
-      # @return [Object] Parsed response
+      # # Resolve import errors from Kibana saved object 
+      # #
+      # # @param body [Hash] Same given to #import API
+      # # @param params [Hash] query params
+      # #   @option params [Boolean] :createNewCopies
+      # # @return [Hash] Parsed response
       # def resolve_import_errors(body:, params: {}, **args)
       #   params = symbolize_keys(params).slice(:createNewCopies)
       #   body = symbolize_keys(body).slice(:file, :retries)
@@ -245,9 +300,10 @@ module Kibana
       # end
 
       # Verify that a saved object exists
-      # @param type [String] Type of the saved object
-      # @param id [String] Saved object id 
-      # @param options [Object] query params
+      #
+      # @param type [String]
+      # @param id [String]
+      # @param options [Hash] query params
       # @return [Boolean] 
       def exists?(**args)
         begin
@@ -257,7 +313,13 @@ module Kibana
         end
       end
 
-      # savedObjectTypes: [:'index-pattern']
+      # Returns related saved_objects for a saved_object
+      #
+      # @param type [String]
+      # @param id [String]
+      # @param params [Hash] query params
+      #   @option params [Array<String>] :savedObjectTypes
+      # @return [ToDo]
       def related_objects(type:, id:, params: {}, **args)
         params = symbolize_keys(params).slice(:savedObjectTypes)
         _validate_type(type)
@@ -269,8 +331,10 @@ module Kibana
         ))
       end
 
-      # counts({typesToInclude: [:visualization]})
-      # @param body [Object] (:typesToInclude)
+      # Get count of types of visualizations
+      #
+      # @param body [Hash] query params
+      #   @option body [Array<String>] :typesToInclude
       # @return [Object]
       def counts(body:, **args)
         body = symbolize_keys(body).slice(:typesToInclude)
@@ -282,8 +346,15 @@ module Kibana
         ))
       end
 
-      #example to find orphan visualizations find_all_orphans(params: {type: [:visualization], fields: [:title]}, parent_type: :dashboard)
-      # @param params [Object] find params (same whitelist as find method)
+      # Returns al saved_objects that hash no parent with another type
+      # An example would be to find all visualizations that are not
+      # related to any dashboard
+      #
+      # @example to find orphan visualizations from dashboards
+      # 
+      #   find_all_orphans(params: {type: [:visualization], fields: [:title]}, parent_type: :dashboard)
+      #
+      # @param params [Hash] (same as #find method)
       # @param parent_type [Symbol] the type of the parent object
       # @return [Array] of saved objects
       def find_orphans(params: {}, parent_type:)
@@ -315,6 +386,8 @@ module Kibana
         end
       end
 
+      # Get kibana fields for an index pattern
+      #
       # @param [String] title of the index pattern, not the id
       # @return [Object] a hash containing all fields under 'fields' key
       def fields_for_index_pattern(pattern, meta_fields=[:_source, :_id, :_type, :_index, :_score])
@@ -325,28 +398,6 @@ module Kibana
             pattern: pattern,
             meta_fields: meta_fields
           }
-        )
-        #add defaults
-        data['fields'] = data['fields'].map do |field|
-          field.merge({'count' => 0, 'scripted' => false})
-        end
-        data
-      end
-
-      def refresh_index_pattern!(id)
-        index_pattern = get(type: :'index-pattern', id: id)
-        current_fields = JSON.parse(index_pattern['attributes']['fields'])
-        scripted_fields = current_fields.select do |f|
-          f['scripted']
-        end
-        new_fields = fields_for_index_pattern(
-          index_pattern['attributes']['title']
-        )['fields']
-        index_pattern['attributes']['fields'] = (scripted_fields + new_fields).to_json
-        update(
-          body: {attributes: index_pattern['attributes']},
-          type: :'index-pattern',
-          id: id
         )
       end
 
