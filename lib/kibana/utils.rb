@@ -1,6 +1,9 @@
 module Kibana
   module Utils
 
+    #
+    # @todo improve arguments
+    #
     def self.build_dashboard(title, options = {})
       references = options.delete(:references) || []
       description = options.delete(:description) || ''
