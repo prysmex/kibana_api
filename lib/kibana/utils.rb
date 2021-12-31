@@ -1,3 +1,5 @@
+require 'json'
+
 module Kibana
   module Utils
 
@@ -23,6 +25,22 @@ module Kibana
           # 'kibanaSavedObjectMeta'
         }
       })
+    end
+
+    # Parses an ndjson exported string
+    #
+    # @param [String] export
+    # @return [Array]
+    def self.parse_ndjson(export)
+      export.lines.map{|l| JSON.parse(l) }
+    end
+
+    # Builds an ndjson string
+    #
+    # @param array [Array<Hash>]
+    # @return [String]
+    def self.to_ndjson(array)
+      array.map(&:to_json).join("\n")
     end
     
   end

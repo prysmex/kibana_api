@@ -309,6 +309,14 @@ module Kibana
       })
     end
 
+    # Adds a visualization on the first available space in the grid
+    #
+    # @param w [Integer] panel width
+    # @param h [Integer] panel height
+    # @param i [String]
+    # @param title [String]
+    # @param reference_id [String]
+    # @return [void]
     def add_visualization(w:, h:, i:, title:, reference_id:)
       x,y = self.get_available_coordinates(w,h)
       insert_visualization_at(
