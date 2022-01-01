@@ -42,6 +42,20 @@ module Kibana
     def self.to_ndjson(array)
       array.map(&:to_json).join("\n")
     end
+
+    # Parses, yields then unparses a hash
+    #
+    # @param [String] json
+    # @return [String]
+    def self.modify_json(json, default: {}, &block)
+      parsed = json.nil? ? default : JSON.parse(json)
+      yield(parsed)
+      JSON.unparse(parsed)
+    end
+
+    def self.modify_json_key(hash, key, &block)
+      hash[key] = modify_json(hash[key], &block)
+    end
     
   end
 end
