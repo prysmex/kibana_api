@@ -3,6 +3,10 @@ require 'securerandom'
 module Kibana
   module Dashboard
 
+    # Backing class for a single object inside a dashboard's attributes.panelsJSON array
+    # 
+    # @note from version 7.17.1
+    #
     # {
     #   'version': '7.16.2',
     #   'type': 'visualization',
@@ -48,6 +52,8 @@ module Kibana
 
     # Backing class for a Kibana Dashboard document, which hash the following structure
     #
+    # @note from version 7.17.1
+    #
     # {
     #   "attributes"=>{
     #     "description"=>"Empty template dashboard",
@@ -61,10 +67,10 @@ module Kibana
     #     "title"=>"empty",
     #     "version"=>1
     #   },
-    #   "coreMigrationVersion"=>"7.16.2",
+    #   "coreMigrationVersion"=>"7.17.1",
     #   "id"=>"fce26b20-6695-11ec-9837-3b6567a4e168",
     #   "migrationVersion"=>{
-    #     "dashboard"=>"7.16.0"
+    #     "dashboard"=>"7.17.0"
     #   },
     #   "references"=>[],
     #   "type"=>"dashboard",
