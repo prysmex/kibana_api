@@ -397,7 +397,7 @@ module Kibana
       # @param value [String|Integer]
       # @param index_pattern_id [String]
       # @return mutated dashboard with appended filter
-      def append_filter(key:, type:, value:, index_pattern_id:, negate: false, disabled: false)
+      def append_filter(key:, type:, value:, index_pattern_id:, negate: false, disabled: false, label: nil)
         dashboard_filter = JSON.parse(self['attributes']['kibanaSavedObjectMeta']['searchSourceJSON'])
 
         # filter position in dashboard (index)
@@ -407,7 +407,7 @@ module Kibana
         # build base filter object
         filter = {
           "meta"=>{
-            'alias' => nil,
+            'alias' => label,
             "negate"=>negate,
             "disabled"=>disabled,
             "key"=>key,
