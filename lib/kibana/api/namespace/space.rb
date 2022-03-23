@@ -15,7 +15,7 @@ module Kibana
         :actions, :advancedSettings, :apm, :canvas, :dashboard, :dev_tools,
         :discover, :enterpriseSearch, :fleet, :indexPatterns, :infrastructure,
         :logs, :maps, :ml, :monitoring, :observabilityCases, :osquery, :savedObjectsManagement,
-        :savedObjectsTagging, :siem, :stackAlerts, :uptime, :visualize
+        :savedObjectsTagging, :securitySolutionCases, :siem, :stackAlerts, :uptime, :visualize
       ].freeze
 
       # BODY_TEMPLATE = {

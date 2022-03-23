@@ -5,10 +5,10 @@ module Kibana
 
     # Backing class for a single object inside a dashboard's attributes.panelsJSON array
     # 
-    # @note from version 7.17.1
+    # @note from version 8.0.1
     #
     # {
-    #   'version': '7.16.2',
+    #   'version': '8.0.1',
     #   'type': 'visualization',
     #   'gridData': {
     #     'x': 0,
@@ -52,7 +52,7 @@ module Kibana
 
     # Backing class for a Kibana Dashboard document, which hash the following structure
     #
-    # @note from version 7.17.1
+    # @note from version 8.0.1
     #
     # {
     #   "attributes"=>{
@@ -67,10 +67,10 @@ module Kibana
     #     "title"=>"empty",
     #     "version"=>1
     #   },
-    #   "coreMigrationVersion"=>"7.17.1",
+    #   "coreMigrationVersion"=>"8.0.1",
     #   "id"=>"fce26b20-6695-11ec-9837-3b6567a4e168",
     #   "migrationVersion"=>{
-    #     "dashboard"=>"7.17.0"
+    #     "dashboard"=>"8.0.1"
     #   },
     #   "references"=>[],
     #   "type"=>"dashboard",
@@ -394,7 +394,7 @@ module Kibana
       #
       # @param key [String]
       # @param type [String] is, one_of, exist
-      # @param value [String|Integer]
+      # @param value [String|Integer|Hash]
       # @param index_pattern_id [String]
       # @return mutated dashboard with appended filter
       def append_filter(key:, type:, value:, index_pattern_id:, negate: false, disabled: false, label: nil)
@@ -407,6 +407,7 @@ module Kibana
         # build base filter object
         filter = {
           "meta"=>{
+            'field' => key,
             'alias' => label,
             "negate"=>negate,
             "disabled"=>disabled,
@@ -418,12 +419,12 @@ module Kibana
           }
         }
 
-        # set type, meta and query
+        # set type, meta, query and field to filter hash
         case type
         when 'is'
           filter['meta']['type'] = 'phrase'
           filter['query'] = { 'match_phrase' => { "#{key}" => value } }
-          filter['meta']['params'] = { 'query' =>  value.to_s}
+          filter['meta']['params'] = { 'query' =>  value.to_s }
         when 'one_of'
           filter['meta']['type'] = 'phrases'
           filter['query'] = {
@@ -437,6 +438,11 @@ module Kibana
           filter['meta']['type'] = 'exists'
           filter['query'] = { "exists"=>{ "field"=>"#{key}" } }
           filter['meta']['value'] = 'exists'
+        when 'between'
+          filter['meta']['field'] = key
+          filter['meta']['type'] = 'range'
+          filter['query'] = { "range"=>{ "#{key}"=> value } }
+          filter['meta']['params'] = value
         else
           raise ArgumentError.new("invalid type #{type}")
         end
