@@ -5,10 +5,10 @@ module Kibana
 
     # Backing class for a single object inside a dashboard's attributes.panelsJSON array
     # 
-    # @note from version 8.0.1
+    # @note from version 8.1.1
     #
     # {
-    #   'version': '8.0.1',
+    #   'version': '8.1.1',
     #   'type': 'visualization',
     #   'gridData': {
     #     'x': 0,
@@ -20,7 +20,8 @@ module Kibana
     #   'panelIndex': 0bbdf49d-40e5-485c-9977-29d3293bc2d6,
     #   'embeddableConfig': {
     #     'enhancements': {},
-    #     'hidePanelTitles': true
+    #     'hidePanelTitles': true,
+    #     'savedVis': {}
     #   },
     #   'title': 'Some dashboard specific title',
     #   'panelRefName': "panel_0bbdf49d-40e5-485c-9977-29d3293bc2d6"
@@ -52,30 +53,30 @@ module Kibana
 
     # Backing class for a Kibana Dashboard document, which hash the following structure
     #
-    # @note from version 8.0.1
+    # @note from version 8.1.1
     #
     # {
-    #   "attributes"=>{
-    #     "description"=>"Empty template dashboard",
-    #     "hits"=>0,
-    #     "kibanaSavedObjectMeta"=>{
-    #       "searchSourceJSON"=>"{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
+    #   "attributes": {
+    #     "description": "Empty template dashboard",
+    #     "hits": 0,
+    #     "kibanaSavedObjectMeta": {
+    #       "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
     #     },
-    #     "optionsJSON"=>"{\"useMargins\":true,\"syncColors\":false,\"hidePanelTitles\":false}",
-    #     "panelsJSON"=>"[]",
-    #     "timeRestore"=>false,
-    #     "title"=>"empty",
-    #     "version"=>1
+    #     "optionsJSON": "{\"useMargins\":true,\"syncColors\":false,\"hidePanelTitles\":false}",
+    #     "panelsJSON": "[]",
+    #     "timeRestore": false,
+    #     "title": "empty",
+    #     "version": 1
     #   },
-    #   "coreMigrationVersion"=>"8.0.1",
-    #   "id"=>"fce26b20-6695-11ec-9837-3b6567a4e168",
-    #   "migrationVersion"=>{
-    #     "dashboard"=>"8.0.1"
+    #   "coreMigrationVersion": "8.1.1",
+    #   "id": "fce26b20-6695-11ec-9837-3b6567a4e168",
+    #   "migrationVersion": {
+    #     "dashboard": "8.1.0"
     #   },
-    #   "references"=>[],
-    #   "type"=>"dashboard",
-    #   "updated_at"=>"2021-12-26T21:51:32.061Z",
-    #   "version"=>"WzQ2MDE5LDNd"
+    #   "references": [],
+    #   "type": "dashboard",
+    #   "updated_at": "2021-12-26T21:51:32.061Z",
+    #   "version": "WzQ2MDE5LDNd"
     # }
     #
     class Dashboard < Hash
