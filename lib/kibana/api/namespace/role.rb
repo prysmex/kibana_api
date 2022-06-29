@@ -9,6 +9,57 @@ module Kibana
       end
     end
 
+    #  sample as of 8.3.0
+    #
+    # {
+    #   "name": "test",
+    #   "metadata": {},
+    #   "transient_metadata": { "enabled": true },
+    #   "elasticsearch": { "cluster": [], "indices": [], "run_as": [] },
+    #   "kibana": [
+    #     {
+    #       "base": [],
+    #       "feature": {
+    #         "discover": ["minimal_read", "url_create", "store_search_session"], #["read"]
+    #         "canvas": ["read"],
+    #         "maps": ["read"],
+    #         "ml": ["read"],
+    #         "graph": ["read"],
+    #         "visualize": ["minimal_read", "url_create"], #["read"]
+    #         "dashboard": ["minimal_read", "url_create", "store_search_session"], #["read"]
+    #         "logs": ["read"],
+    #         "infrastructure": ["read"],
+    #         "apm": ["read"],
+    #         "uptime": ["read"],
+    #         "observabilityCases": ["read"],
+    #         "securitySolutionCases": ["read"],
+    #         "fleet": ["read"],
+    #         "stackAlerts": ["read"],
+    #         "generalCases": ["read"],
+    #         "actions": ["read"],
+    #         "osquery": [
+    #           "minimal_read",
+    #           "live_queries_read",
+    #           "saved_queries_read",
+    #           "packs_read"
+    #         ], #["read"]
+    #         "savedObjectsTagging": ["read"],
+    #         "savedObjectsManagement": ["read"],
+    #         "indexPatterns": ["read"],
+    #         "advancedSettings": ["read"],
+    #         "dev_tools": ["read"],
+    #         "siem": ["read"]
+    #       },
+    #       "spaces": ["development_master"]
+    #     },
+    #     { "base": ["read"], "feature": {}, "spaces": ["default"] },
+    #     { "base": ["all"], "feature": {}, "spaces": ["test"] }
+    #   ],
+    #   "_transform_error": [],
+    #   "_unrecognized_applications": []
+    # }
+    
+
     class RoleClient < BaseClient
 
       # Updates a Kibana role
