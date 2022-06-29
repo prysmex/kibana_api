@@ -1,7 +1,6 @@
 require_relative 'api/base_client'
 require_relative 'api/spaceable'
 require_relative 'api/namespace/canvas'
-require_relative 'api/namespace/dashboard'
 require_relative 'api/namespace/features'
 require_relative 'api/namespace/role'
 require_relative 'api/namespace/saved_object'
@@ -20,7 +19,6 @@ module Kibana
                 Kibana::API::Role,
                 Kibana::API::SavedObject,
                 Kibana::API::Space,
-                Kibana::API::Dashboard,
                 Kibana::API::Canvas
     end
 

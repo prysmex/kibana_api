@@ -76,7 +76,6 @@ Kibana::API.client.saved_object.get(...)
 These is the list of the supported API clients:
 
 - Kibana::API::CanvasClient
-- Kibana::API::DashboardClient
 - Kibana::API::FeaturesClient
 - Kibana::API::RoleClient
 - Kibana::API::SavedObjectClient
@@ -120,10 +119,6 @@ end
 
 - [Kibana::API::CanvasClient](https://www.elastic.co/guide/en/kibana/master/saved-objects-api.html)
   - `find`
-
-- [Kibana::API::DashboardClient](https://www.elastic.co/guide/en/kibana/master/dashboard-api.html)
-  - `export`
-  - `import`
 
 - [Kibana::API::FeaturesClient](https://www.elastic.co/guide/en/kibana/master/features-api-get.html)
   - `features`

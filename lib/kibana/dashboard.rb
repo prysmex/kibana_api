@@ -5,10 +5,10 @@ module Kibana
 
     # Backing class for a single object inside a dashboard's attributes.panelsJSON array
     # 
-    # @note from version 8.2.0
+    # @note from version 8.3.0
     #
     # {
-    #   'version': '8.2.0',
+    #   'version': '8.3.0',
     #   'type': 'visualization',
     #   'gridData': {
     #     'x': 0,
@@ -53,7 +53,7 @@ module Kibana
 
     # Backing class for a Kibana Dashboard document, which hash the following structure
     #
-    # @note from version 8.2.0
+    # @note from version 8.3.0
     #
     # {
     #   "attributes": {
@@ -62,16 +62,16 @@ module Kibana
     #     "kibanaSavedObjectMeta": {
     #       "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
     #     },
-    #     "optionsJSON": "{\"useMargins\":true,\"syncColors\":false,\"hidePanelTitles\":false}",
+    #     "optionsJSON": "{\"useMargins\":true,\"syncColors\":false,\"syncTooltips\":false,\"hidePanelTitles\":false}",
     #     "panelsJSON": "[]",
     #     "timeRestore": false,
     #     "title": "empty",
     #     "version": 1
     #   },
-    #   "coreMigrationVersion": "8.2.0",
+    #   "coreMigrationVersion": "8.3.0",
     #   "id": "fce26b20-6695-11ec-9837-3b6567a4e168",
     #   "migrationVersion": {
-    #     "dashboard": "8.2.0"
+    #     "dashboard": "8.3.0"
     #   },
     #   "references": [],
     #   "type": "dashboard",
