@@ -1,15 +1,15 @@
 PATH
   remote: .
   specs:
-    kibana (0.1.20)
+    kibana (0.4.0)
       activesupport (~> 6)
-      faraday (= 1.0.1)
-      oj (= 3.10.13)
+      faraday (~> 1)
+      oj (~> 3)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.1.4.1)
+    activesupport (6.1.7)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -19,9 +19,30 @@ GEM
     builder (3.2.4)
     byebug (9.1.0)
     concurrent-ruby (1.1.9)
-    faraday (1.0.1)
+    faraday (1.10.0)
+      faraday-em_http (~> 1.0)
+      faraday-em_synchrony (~> 1.0)
+      faraday-excon (~> 1.1)
+      faraday-httpclient (~> 1.0)
+      faraday-multipart (~> 1.0)
+      faraday-net_http (~> 1.0)
+      faraday-net_http_persistent (~> 1.0)
+      faraday-patron (~> 1.0)
+      faraday-rack (~> 1.0)
+      faraday-retry (~> 1.0)
+      ruby2_keywords (>= 0.0.4)
+    faraday-em_http (1.0.0)
+    faraday-em_synchrony (1.0.0)
+    faraday-excon (1.1.0)
+    faraday-httpclient (1.0.1)
+    faraday-multipart (1.0.3)
       multipart-post (>= 1.2, < 3)
-    i18n (1.8.11)
+    faraday-net_http (1.0.1)
+    faraday-net_http_persistent (1.2.0)
+    faraday-patron (1.0.0)
+    faraday-rack (1.0.0)
+    faraday-retry (1.0.3)
+    i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     minitest (5.14.4)
     minitest-reporters (1.4.3)
@@ -33,9 +54,10 @@ GEM
     oj (3.10.13)
     rake (13.0.6)
     ruby-progressbar (1.11.0)
-    tzinfo (2.0.4)
+    ruby2_keywords (0.0.5)
+    tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
-    zeitwerk (2.5.1)
+    zeitwerk (2.6.0)
 
 PLATFORMS
   ruby
