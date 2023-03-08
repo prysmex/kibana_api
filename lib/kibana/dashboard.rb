@@ -1,14 +1,16 @@
 require 'securerandom'
 
 module Kibana
+  CLIENT_VERSION = "8.6.2"
   module Dashboard
+    VISUALIZATION_VERSION = '8.6.2'.freeze
+    CORE_MIGRATION_VERSION = '8.6.2'.freeze
+    MIGRATION_VERSION = '8.6.0'.freeze
 
     # Backing class for a single object inside a dashboard's attributes.panelsJSON array
-    # 
-    # @note from version 8.6.0
     #
     # {
-    #   'version': '8.6.0',
+    #   'version': VISUALIZATION_VERSION,
     #   'type': 'visualization',
     #   'gridData': {
     #     'x': 0,
@@ -53,8 +55,6 @@ module Kibana
 
     # Backing class for a Kibana Dashboard document, which hash the following structure
     #
-    # @note from version 8.6.0
-    #
     # {
     #   "attributes": {
     #     "description": "Empty template dashboard",
@@ -68,10 +68,10 @@ module Kibana
     #     "title": "empty",
     #     "version": 1
     #   },
-    #   "coreMigrationVersion": "8.6.0",
+    #   "coreMigrationVersion": CORE_MIGRATION_VERSION,
     #   "id": "fce26b20-6695-11ec-9837-3b6567a4e168",
     #   "migrationVersion": {
-    #     "dashboard": "8.6.0"
+    #     "dashboard": MIGRATION_VERSION
     #   },
     #   "references": [],
     #   "type": "dashboard",
