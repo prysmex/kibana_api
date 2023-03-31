@@ -9,7 +9,7 @@ module Kibana
       end
     end
 
-    #  sample as of 8.3.0
+    #  sample as of 8.7.0
     #
     # {
     #   "name": "test",
@@ -20,37 +20,52 @@ module Kibana
     #     {
     #       "base": [],
     #       "feature": {
-    #         "discover": ["minimal_read", "url_create", "store_search_session"], #["read"]
-    #         "canvas": ["read"],
+    #         "discover": [
+    #           "minimal_read",
+    #           "url_create",
+    #           "store_search_session",
+    #           "generate_report"
+    #         ],
+    #         "dashboard": [
+    #           "minimal_read",
+    #           "url_create",
+    #           "store_search_session",
+    #           "generate_report",
+    #           "download_csv_report"
+    #         ],
+    #         "canvas": ["minimal_read", "generate_report"],
     #         "maps": ["read"],
     #         "ml": ["read"],
     #         "graph": ["read"],
-    #         "visualize": ["minimal_read", "url_create"], #["read"]
-    #         "dashboard": ["minimal_read", "url_create", "store_search_session"], #["read"]
+    #         "visualize": ["minimal_read", "url_create", "generate_report"],
     #         "logs": ["read"],
     #         "infrastructure": ["read"],
     #         "apm": ["read"],
     #         "uptime": ["read"],
-    #         "observabilityCases": ["read"],
-    #         "securitySolutionCases": ["read"],
-    #         "fleet": ["read"],
-    #         "stackAlerts": ["read"],
-    #         "generalCases": ["read"],
-    #         "actions": ["read"],
+    #         "observabilityCases": ["minimal_read", "cases_delete"],
+    #         "securitySolutionCases": ["minimal_read", "cases_delete"],
+    #         "siem": ["minimal_read"],
+    #         "dev_tools": ["read"],
+    #         "advancedSettings": ["read"],
+    #         "indexPatterns": ["read"],
+    #         "filesManagement": ["read"],
+    #         "filesSharedImage": ["read"],
+    #         "savedObjectsManagement": ["read"],
+    #         "savedObjectsTagging": ["read"],
     #         "osquery": [
     #           "minimal_read",
     #           "live_queries_read",
+    #           "run_saved_queries",
     #           "saved_queries_read",
     #           "packs_read"
-    #         ], #["read"]
-    #         "savedObjectsTagging": ["read"],
-    #         "savedObjectsManagement": ["read"],
-    #         "indexPatterns": ["read"],
-    #         "advancedSettings": ["read"],
-    #         "dev_tools": ["read"],
-    #         "siem": ["read"]
+    #         ],
+    #         "actions": ["read"],
+    #         "generalCases": ["minimal_read", "cases_delete"],
+    #         "rulesSettings": ["minimal_read", "readFlappingSettings"],
+    #         "stackAlerts": ["read"],
+    #         "fleet": ["read"]
     #       },
-    #       "spaces": ["development_master"]
+    #       "spaces": ["default"]
     #     },
     #     { "base": ["read"], "feature": {}, "spaces": ["default"] },
     #     { "base": ["all"], "feature": {}, "spaces": ["test"] }
@@ -58,7 +73,6 @@ module Kibana
     #   "_transform_error": [],
     #   "_unrecognized_applications": []
     # }
-    
 
     class RoleClient < BaseClient
 

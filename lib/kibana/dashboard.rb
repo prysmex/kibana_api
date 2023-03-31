@@ -1,16 +1,16 @@
 require 'securerandom'
 
 module Kibana
-  CLIENT_VERSION = "8.6.2"
+  CLIENT_VERSION = "8.7.0"
   module Dashboard
-    VISUALIZATION_VERSION = '8.6.2'.freeze
-    CORE_MIGRATION_VERSION = '8.6.2'.freeze
-    MIGRATION_VERSION = '8.6.0'.freeze
+    # PANELS_JSON_VISUALIZATION_VERSION = '8.7.0'.freeze
+    CORE_MIGRATION_VERSION = '8.7.0'.freeze
+    MIGRATION_VERSION = '8.7.0'.freeze
 
     # Backing class for a single object inside a dashboard's attributes.panelsJSON array
     #
     # {
-    #   'version': VISUALIZATION_VERSION,
+    #   'version': PANELS_JSON_VISUALIZATION_VERSION,
     #   'type': 'visualization',
     #   'gridData': {
     #     'x': 0,
@@ -58,25 +58,23 @@ module Kibana
     # {
     #   "attributes": {
     #     "description": "Empty template dashboard",
-    #     "hits": 0,
     #     "kibanaSavedObjectMeta": {
     #       "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
     #     },
-    #     "optionsJSON": "{\"useMargins\":true,\"syncColors\":false,\"syncTooltips\":false,\"hidePanelTitles\":false}",
+    #     "optionsJSON": "{\"useMargins\":true,\"syncColors\":false,\"syncCursor\":true,\"syncTooltips\":false,\"hidePanelTitles\":false}",
     #     "panelsJSON": "[]",
     #     "timeRestore": false,
     #     "title": "empty",
     #     "version": 1
     #   },
     #   "coreMigrationVersion": CORE_MIGRATION_VERSION,
-    #   "id": "fce26b20-6695-11ec-9837-3b6567a4e168",
-    #   "migrationVersion": {
-    #     "dashboard": MIGRATION_VERSION
-    #   },
+    #   "created_at": "2023-03-30T23:07:32.522Z",
+    #   "id": "a6be78a0-cf4f-11ed-b514-dddd0f14c058",
+    #   "migrationVersion": { "dashboard": MIGRATION_VERSION },
     #   "references": [],
     #   "type": "dashboard",
-    #   "updated_at": "2021-12-26T21:51:32.061Z",
-    #   "version": "WzQ2MDE5LDNd"
+    #   "updated_at": "2023-03-30T23:07:32.522Z",
+    #   "version": "WzMwOSwxXQ=="
     # }
     #
     class Dashboard < Hash
