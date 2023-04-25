@@ -1,6 +1,7 @@
 require 'active_support'
 require 'active_support/all'
 require 'faraday'
+require 'faraday/multipart'
 require 'oj'
 require 'kibana/version'
 require 'kibana/api'

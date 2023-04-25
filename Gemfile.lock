@@ -1,9 +1,10 @@
 PATH
   remote: .
   specs:
-    kibana (0.7.2)
+    kibana (0.7.3)
       activesupport (~> 6)
       faraday (~> 2)
+      faraday-multipart
       oj (~> 3)
 
 GEM
@@ -22,6 +23,8 @@ GEM
     faraday (2.7.4)
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
+    faraday-multipart (1.0.4)
+      multipart-post (~> 2)
     faraday-net_http (3.0.2)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
@@ -31,6 +34,7 @@ GEM
       builder
       minitest (>= 5.0)
       ruby-progressbar
+    multipart-post (2.3.0)
     oj (3.10.13)
     rake (13.0.6)
     ruby-progressbar (1.11.0)

@@ -43,5 +43,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "byebug", "~> 9.1.0"
   spec.add_dependency "activesupport", '~> 6'
   spec.add_dependency 'faraday', '~> 2'
+  spec.add_dependency 'faraday-multipart'
   spec.add_dependency 'oj', '~> 3'
 end
