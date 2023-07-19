@@ -51,6 +51,7 @@ module Kibana
           # Default Kibana API Headers
           c.headers['kbn-xsrf'] = 'true'
           c.headers['Authorization'] = "ApiKey #{@api_key}"
+          # c.headers['Kbn-Version'] = Kibana::CLIENT_VERSION
           # c.headers['Content-Type'] = 'application/json;charset=UTF-8'
         end
       end
