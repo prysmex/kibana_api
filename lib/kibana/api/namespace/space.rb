@@ -11,12 +11,13 @@ module Kibana
 
     class SpaceClient < BaseClient
 
-      FEATURES = [
-        :actions, :advancedSettings, :apm, :canvas, :dashboard, :dev_tools, :discover,
-        :enterpriseSearch, :fleet, :fleetv2, :generalCases, :graph, :indexPatterns,
-        :infrastructure, :logs, :maps, :ml, :monitoring, :observabilityCases, :osquery,
-        :savedObjectsManagement, :savedObjectsTagging, :securitySolutionCases, :siem,
-        :stackAlerts, :uptime, :visualize
+      FEATURES = %i[
+        actions advancedSettings apm canvas dashboard dev_tools discover
+        enterpriseSearch filesManagement filesSharedImage fleet fleetv2
+        generalCases graph guidedOnboardingFeature indexPatterns infrastructure
+        logs maintenanceWindow maps ml monitoring observabilityCases osquery
+        rulesSettings savedObjectsManagement savedObjectsTagging securitySolutionCases
+        siem slo stackAlerts uptime visualize
       ].freeze
 
       # BODY_TEMPLATE = {
