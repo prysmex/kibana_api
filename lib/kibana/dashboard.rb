@@ -1,11 +1,11 @@
 require 'securerandom'
 
 module Kibana
-  CLIENT_VERSION = "8.8.2"
+  CLIENT_VERSION = "8.9.0"
   module Dashboard
     # PANELS_JSON_VISUALIZATION_VERSION = '8.8.0'.freeze
     CORE_MIGRATION_VERSION = '8.8.0'.freeze
-    TYPE_MIGRATION_VERSION = '8.7.0'.freeze
+    TYPE_MIGRATION_VERSION = '8.9.0'.freeze
 
     # Backing class for a single object inside a dashboard's attributes.panelsJSON array
     #
