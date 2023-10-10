@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kibana (0.7.10)
+    kibana (0.7.11)
       activesupport (~> 6)
       faraday (~> 2)
       faraday-multipart
