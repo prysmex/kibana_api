@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kibana (0.7.13)
+    kibana (0.8.0)
       activesupport (~> 6)
       faraday (~> 2)
       faraday-multipart
@@ -18,8 +18,10 @@ GEM
       zeitwerk (~> 2.3)
     ansi (1.5.0)
     builder (3.2.4)
-    byebug (9.1.0)
     concurrent-ruby (1.2.2)
+    debug (1.8.0)
+      irb (>= 1.5.0)
+      reline (>= 0.3.1)
     faraday (2.7.4)
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
@@ -28,17 +30,28 @@ GEM
     faraday-net_http (3.0.2)
     i18n (1.13.0)
       concurrent-ruby (~> 1.0)
+    io-console (0.6.0)
+    irb (1.9.1)
+      rdoc
+      reline (>= 0.3.8)
     minitest (5.14.4)
-    minitest-reporters (1.4.3)
+    minitest-reporters (1.6.1)
       ansi
       builder
       minitest (>= 5.0)
       ruby-progressbar
     multipart-post (2.3.0)
     oj (3.10.13)
-    rake (13.0.6)
-    ruby-progressbar (1.11.0)
+    psych (5.1.1.1)
+      stringio
+    rake (13.1.0)
+    rdoc (6.6.0)
+      psych (>= 4.0.0)
+    reline (0.4.1)
+      io-console (~> 0.5)
+    ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
+    stringio (3.1.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     zeitwerk (2.6.7)
@@ -47,12 +60,12 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (= 2.1.4)
-  byebug (~> 9.1.0)
+  bundler (= 2.4.22)
+  debug (>= 1.0.0)
   kibana!
-  minitest (>= 5.14)
-  minitest-reporters (>= 1.4)
-  rake (~> 13.0)
+  minitest (~> 5.14)
+  minitest-reporters (~> 1.6)
+  rake (~> 13.1)
 
 BUNDLED WITH
-   2.1.4
+   2.4.22

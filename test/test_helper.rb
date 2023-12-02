@@ -2,7 +2,7 @@ require 'minitest/autorun'
 require 'minitest/spec'
 require 'minitest/reporters'
 require 'kibana'
-require 'byebug'
+require 'debug'
 
 Minitest::Reporters.use!
 
