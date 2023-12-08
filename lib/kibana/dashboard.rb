@@ -1,7 +1,7 @@
 require 'securerandom'
 
 module Kibana
-  CLIENT_VERSION = '8.11.1'.freeze
+  CLIENT_VERSION = '8.11.2'.freeze
   module Dashboard
     # PANELS_JSON_VISUALIZATION_VERSION = '8.9.1'.freeze
     CORE_MIGRATION_VERSION = '8.8.0'.freeze
