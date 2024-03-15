@@ -1,11 +1,14 @@
+# frozen_string_literal: true
+
 require 'securerandom'
+require 'super_hash'
 
 module Kibana
-  CLIENT_VERSION = '8.12.1'.freeze
+  CLIENT_VERSION = '8.12.1'
   module Dashboard
     # PANELS_JSON_VISUALIZATION_VERSION = '8.9.1'.freeze
-    CORE_MIGRATION_VERSION = '8.8.0'.freeze
-    TYPE_MIGRATION_VERSION = '8.9.0'.freeze
+    CORE_MIGRATION_VERSION = '8.8.0'
+    TYPE_MIGRATION_VERSION = '8.9.0'
 
     # Backing class for a single object inside a dashboard's attributes.panelsJSON array
     #
@@ -39,6 +42,7 @@ module Kibana
       def x2
         grid_data = self['gridData']
         return if grid_data.nil? || grid_data['x'].nil? || grid_data['w'].nil?
+
         grid_data['x'] + grid_data['w']
       end
 
@@ -48,6 +52,7 @@ module Kibana
       def y2
         grid_data = self['gridData']
         return if grid_data.nil? || grid_data['y'].nil? || grid_data['h'].nil?
+
         grid_data['y'] + grid_data['h']
       end
 
@@ -55,6 +60,7 @@ module Kibana
 
     # Backing class for a Kibana Dashboard document, which hash the following structure
     #
+    # rubocop:disable Layout/LineLength
     # {
     #   "attributes": {
     #     "description": "Empty template dashboard",
@@ -77,6 +83,7 @@ module Kibana
     #   "updated_at": "2023-03-30T23:07:32.522Z",
     #   "version": "WzMwOSwxXQ=="
     # }
+    # rubocop:enable Layout/LineLength
     #
     class Dashboard < Hash
       include SuperHash::Hasher
@@ -86,53 +93,53 @@ module Kibana
 
       # Gets a value from the dashboard's 'attributes' key
       def get_attribute(attribute)
-        self.dig('attributes', attribute)
+        dig('attributes', attribute)
       end
 
       # sets a value on the dashboard's 'attributes' key
       def set_attribute(attribute, value)
         SuperHash::Utils.bury(self, 'attributes', attribute, value)
       end
-    
+
       # Parses each object inside the 'panelsJSON' key into a PanelJSON struct
       #
       # @return [Hash]
       def parsed_panels_json
-        JSON.parse(self.get_attribute('panelsJSON')).map{|o| PanelJSON.new(o) }
+        JSON.parse(get_attribute('panelsJSON')).map { |o| PanelJSON.new(o) }
       end
 
       ################
       # MATRIX UTILS #
       ################
-    
+
       # Retrieves the smallest x coordinate of all objects inside the 'panelsJSON' key
       #
       # @return [Integer]
       def min_x
-        parsed_panels_json.min_by{|i| i.dig('gridData', 'x') }&.dig('gridData', 'x') || 0
+        parsed_panels_json.min_by { |i| i.dig('gridData', 'x') }&.dig('gridData', 'x') || 0
       end
-    
+
       # Retrieves the largest x coordinate of all objects inside the 'panelsJSON' key
       #
       # @return [Integer]
       def max_x
-        parsed_panels_json.max_by{|i| i.x2 }&.x2 || 0
+        parsed_panels_json.max_by(&:x2)&.x2 || 0
       end
-    
+
       # Retrieves the smallest y coordinate of all objects inside the 'panelsJSON' key
       #
       # @return [Integer]
       def min_y
-        parsed_panels_json.min_by{|i| i.dig('gridData', 'y') }&.dig('gridData', 'y') || 0
+        parsed_panels_json.min_by { |i| i.dig('gridData', 'y') }&.dig('gridData', 'y') || 0
       end
-    
+
       # Retrieves the largest y coordinate of all objects inside the 'panelsJSON' key
       #
       # @return [Integer]
       def max_y
-        parsed_panels_json.max_by{|i| i.y2 }&.y2 || 0
+        parsed_panels_json.max_by(&:y2)&.y2 || 0
       end
-    
+
       # Builds a matrix N x M where N is the number of the rows and M is the number of columns
       # The value of the element represents the amount of visualizations on it. (0 => empty)
       #
@@ -149,7 +156,7 @@ module Kibana
           rows = matrix.slice(y1, h)
           range = (x1...x2)
           rows.each do |row|
-            row.map!.with_index{|a, i| range.include?(i) ? a + 1 : a }
+            row.map!.with_index { |a, i| range.include?(i) ? a + 1 : a }
           end
         end
 
@@ -164,7 +171,7 @@ module Kibana
       #
       # @return [void]
       def print_dashboard_matrix
-        dashboard_matrix.each{|i| puts i.to_s}
+        dashboard_matrix.each { |i| puts i }
       end
 
       # Checks the following:
@@ -174,7 +181,7 @@ module Kibana
       # @return [Boolean]
       def valid_matrix?
         !dashboard_matrix.any? do |row|
-          row.any?{|i| i > 1}
+          row.any? { |i| i > 1 }
         end
       end
 
@@ -183,7 +190,7 @@ module Kibana
       # @return [Integer] number of empty spaces
       def empty_spaces
         dashboard_matrix.reduce(0) do |acum, row|
-          acum + row.inject(0){|a, e| e == 0 ? a + 1 : a }
+          acum + row.inject(0) { |a, e| e == 0 ? a + 1 : a }
         end
       end
 
@@ -195,52 +202,52 @@ module Kibana
       # @param h [Integer]
       # @param start_position [Symbol]
       # @return [Array] x,y coordinates
-      def get_available_coordinates(w,h, start_position: :top_left)
-
+      def get_available_coordinates(w, h, start_position: :top_left)
         return [0, max_y] if empty_spaces < (w * h)
 
         coordinates = nil
-        matrix = self.dashboard_matrix
+        matrix = dashboard_matrix
 
         # rotate matrix if needed
         matrix = case start_position
         when :top_left
           matrix
         when :top_right
-          matrix.map{|i| i.reverse }
+          matrix.map(&:reverse)
         when :bottom_left
           matrix.reverse
         when :bottom_right
-          matrix.reverse.map{|i| i.reverse }
+          matrix.reverse.map(&:reverse)
         else
-          raise ArgumentError.new("invalid start_position")
+          raise ArgumentError.new('invalid start_position')
         end
-        
+
         # find first available space
         matrix.each_with_index do |row, row_i|
           # skip row since not enought 0s
-          next if row.select{|i| i == 0 }.size < w
+          next if row.select { |i| i == 0 }.size < w
 
           column_i = 0
           while column_i <= DASHBOARD_MAX_WIDTH
-            if row[column_i] != 0
-              column_i += 1
-            else
-              
+            if row[column_i] == 0
+
               array = []
               row.slice(column_i, w).each do |a|
                 break if a != 0
+
                 array.push(a)
               end
 
               if array.size < w
-                column_i += [array.size, 1].max #skip multiple columns
-              elsif (1..w).all?{|i| matrix[row_i + i].nil? || !matrix[row_i + i].slice(column_i, w).include?(1) }
+                column_i += [array.size, 1].max # skip multiple columns
+              elsif (1..w).all? { |i| matrix[row_i + i].nil? || !matrix[row_i + i].slice(column_i, w).include?(1) }
                 coordinates = [column_i, row_i]
                 break
               else
                 column_i += 1
               end
+            else
+              column_i += 1
             end
           end
 
@@ -257,9 +264,9 @@ module Kibana
         when :top_right
           [DASHBOARD_MAX_WIDTH - coordinates[0], coordinates[1]]
         when :bottom_left
-          [coordinates[0], self.max_y - coordinates[1]]
+          [coordinates[0], max_y - coordinates[1]]
         when :bottom_right
-          [DASHBOARD_MAX_WIDTH - coordinates[0], self.max_y - coordinates[1]]
+          [DASHBOARD_MAX_WIDTH - coordinates[0], max_y - coordinates[1]]
         end
       end
 
@@ -271,7 +278,7 @@ module Kibana
       ##################
       # VISUALIZATIONS #
       ##################
-    
+
       # Adds a visualization reference to the dashboard by
       #
       # - add object to 'panelsJSON' key (grid, title, etc...)
@@ -290,40 +297,40 @@ module Kibana
       # @return [void]
       def insert_visualization_at(x:, y:, w:, h:, reference_id:, title:, panel_id: SecureRandom.uuid)
         parsed_panels_json = self.parsed_panels_json
-    
+
         # return if visualization is already present in dashboard
-        return false if parsed_panels_json.find{|i| i['panelIndex'] == panel_id}
-    
+        return false if parsed_panels_json.find { |i| i['panelIndex'] == panel_id }
+
         panel_hash = {
           # 'version': '',
-          'type': 'visualization',
-          'gridData': {
-            'x': x,
-            'y': y,
-            'w': w,
-            'h': h,
-            'i': panel_id
+          type: 'visualization',
+          gridData: {
+            x:,
+            y:,
+            w:,
+            h:,
+            i: panel_id
           },
-          'panelIndex': panel_id,
-          'embeddableConfig': {
-            'enhancements': {
-              'title': title,
+          panelIndex: panel_id,
+          embeddableConfig: {
+            enhancements: {
+              title:
             },
-            'hidePanelTitles': !title
+            hidePanelTitles: !title
           },
-          'title': title,
-          'panelRefName': "panel_#{panel_id}"
+          title:,
+          panelRefName: "panel_#{panel_id}"
         }
-        
+
         # set 'panelsJSON' key
         parsed_panels_json.push(panel_hash)
-        self.set_attribute('panelsJSON', parsed_panels_json.to_json)
-    
+        set_attribute('panelsJSON', parsed_panels_json.to_json)
+
         # add reference to the dashboard 'references' key
         self['references'].push({
-          'id': reference_id,
-          'name': "#{panel_id}:panel_#{panel_id}",
-          'type': 'visualization'
+          id: reference_id,
+          name: "#{panel_id}:panel_#{panel_id}",
+          type: 'visualization'
         })
       end
 
@@ -336,15 +343,15 @@ module Kibana
       # @param panel_id [String] UUID, it must be the same in 'panelsJSON' and 'references'
       # @return [void]
       def add_visualization(w:, h:, reference_id:, title:, panel_id: SecureRandom.uuid, start_position: :top_left)
-        x,y = self.get_available_coordinates(w,h, start_position: start_position)
+        x, y = get_available_coordinates(w, h, start_position:)
         insert_visualization_at(
-          x: x,
-          y: y,
-          w: w,
-          h: h,
-          i: i,
-          reference_id: reference_id,
-          title: title
+          x:,
+          y:,
+          w:,
+          h:,
+          i:,
+          reference_id:,
+          title:
         )
       end
 
@@ -361,7 +368,7 @@ module Kibana
       #
       # @param id [String]
       def remove_visualization(id)
-        reference = self['references'].find{|r| r['id'] == id }
+        reference = self['references'].find { |r| r['id'] == id }
 
         # remove from references
         self['references'] = self['references'] - [reference]
@@ -371,7 +378,7 @@ module Kibana
 
         # remove from panelsJSON
         parsed_panels_json = self.parsed_panels_json
-        new_panels_json = parsed_panels_json.reject{|r| r['gridData']['i'] == i }.to_json
+        new_panels_json = parsed_panels_json.reject { |r| r['gridData']['i'] == i }.to_json
         set_attribute('panelsJSON', new_panels_json)
       end
 
@@ -406,16 +413,16 @@ module Kibana
 
         # build base filter object
         filter = {
-          "meta"=>{
+          'meta' => {
             'field' => key,
             'alias' => label,
-            "negate"=>negate,
-            "disabled"=>disabled,
-            "key"=>key,
-            "indexRefName"=> index_ref_name
+            'negate' => negate,
+            'disabled' => disabled,
+            'key' => key,
+            'indexRefName' => index_ref_name
           },
-          "$state"=>{
-            "store"=>"appState"
+          '$state' => {
+            'store' => 'appState'
           }
         }
 
@@ -423,25 +430,25 @@ module Kibana
         case type
         when 'is'
           filter['meta']['type'] = 'phrase'
-          filter['query'] = { 'match_phrase' => { "#{key}" => value } }
-          filter['meta']['params'] = { 'query' =>  value.to_s }
+          filter['query'] = { 'match_phrase' => { key.to_s => value } }
+          filter['meta']['params'] = { 'query' => value.to_s }
         when 'one_of'
           filter['meta']['type'] = 'phrases'
           filter['query'] = {
-            "bool" => {
-              "should"=> value.map{|o| { "match_phrase"=>{ "#{key}"=> o } } },
-              "minimum_should_match" => 1
+            'bool' => {
+              'should' => value.map { |o| { 'match_phrase' => { key.to_s => o } } },
+              'minimum_should_match' => 1
             }
           }
           filter['meta']['params'] = value
         when 'exist'
           filter['meta']['type'] = 'exists'
-          filter['query'] = { "exists"=>{ "field"=>"#{key}" } }
+          filter['query'] = { 'exists' => { 'field' => key.to_s } }
           filter['meta']['value'] = 'exists'
         when 'between'
           filter['meta']['field'] = key
           filter['meta']['type'] = 'range'
-          filter['query'] = { "range"=>{ "#{key}"=> value } }
+          filter['query'] = { 'range' => { key.to_s => value } }
           filter['meta']['params'] = value
         else
           raise ArgumentError.new("invalid type #{type}")
@@ -464,30 +471,30 @@ module Kibana
       ###########
       # FILTERS #
       ###########
-    
+
       # @param id [String] id of tag
       # @return [Hash] added reference
       def add_tag(id)
-        return false if self['references'].find{|i| i['id'] == id}
+        return false if self['references'].find { |i| i['id'] == id }
 
         self['references'].push({
-          'id': "#{id}",
-          'name': "tag-#{id}",
-          'type': 'tag'
+          id: id.to_s,
+          name: "tag-#{id}",
+          type: 'tag'
         })
       end
-    
+
       # @param id [String] id of tag to remove
       # @param [Array] references
       def remove_tag(id)
-        self['references'] = self['references'].reject{|i| i['id'] == id}
+        self['references'] = self['references'].reject { |i| i['id'] == id }
       end
-    
+
       # @return [Array] filtered references
       def remove_all_tags
-        self['references'] = self['references'].reject{|i| i['type'] == 'tag'}
+        self['references'] = self['references'].reject { |i| i['type'] == 'tag' }
       end
-    
+
     end
   end
 end

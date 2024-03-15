@@ -1,23 +1,24 @@
+# frozen_string_literal: true
+
 module Kibana
   module Transport
     class Client
-  
+
       include Kibana::API
       include HttpStatusCodes
       include ApiExceptions
-  
+
       attr_reader :api_host, :api_key
-  
+
       def initialize(api_host:, api_key:)
         @api_host = api_host
         @api_key = api_key
       end
-  
+
       # Simple wrapper to execute the http method on the connection object
       # use block to customize the connection object
-      def request(http_method:, endpoint:, params: {}, body: {}, raw_body: nil, raw: false, multipart: false, &block)
-
-        body = raw_body ? body : body.to_json
+      def request(http_method:, endpoint:, params: {}, body: {}, raw_body: nil, raw: false, multipart: false)
+        body = body.to_json unless raw_body
 
         response = connection.public_send(http_method, endpoint) do |conn|
           conn.params = conn.params.merge(params)
@@ -27,7 +28,7 @@ module Kibana
         end
 
         unless response_successful?(response)
-          raise error_class(response), "Code: #{response.status}, response: #{response.body}"
+          raise error_class(response).new("Code: #{response.status}, response: #{response.body}")
         end
 
         if raw
@@ -36,9 +37,9 @@ module Kibana
           Oj.load(response.body)
         end
       end
-  
+
       private
-  
+
       # Faraday connection object with default configurations
       # this can be configured in a per-request basis by yielding
       # the connection object on the request or raw_request methods
@@ -55,7 +56,7 @@ module Kibana
           # c.headers['Content-Type'] = 'application/json;charset=UTF-8'
         end
       end
-  
+
       def error_class(response)
         case response.status
         when HTTP_BAD_REQUEST_CODE
@@ -72,13 +73,13 @@ module Kibana
           ApiError
         end
       end
-      
+
       def response_successful?(response)
         [
           HTTP_NO_CONTENT, HTTP_OK_CODE
         ].include?(response.status)
       end
-      
+
     end
   end
 end

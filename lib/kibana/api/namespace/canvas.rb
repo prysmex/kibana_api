@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kibana
   module API
 
@@ -24,7 +26,7 @@ module Kibana
         request(**args.merge(
           http_method: :get,
           endpoint: "#{current_space_api_namespace}/canvas/workpad/find",
-          params: params
+          params:
         ))
       end
     end

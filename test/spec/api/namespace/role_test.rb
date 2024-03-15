@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class RoleTest < Minitest::Test
 
   include AuthTestHelper
 
-  ROLE_ID = '__test_role__'.freeze
+  ROLE_ID = '__test_role__'
 
   def create_test_role
     @client.role.put(id: ROLE_ID, body: {})
@@ -21,10 +23,12 @@ class RoleTest < Minitest::Test
 
     # updates an existing role
     @client.role.put(id: ROLE_ID, body: { metadata: { hey: 1} })
+
     assert_equal 1, @client.role.get_by_id(id: ROLE_ID).dig('metadata', 'hey')
 
     # creates a new role
     @client.role.put(id: 'wrong_id', body: {})
+
     refute_nil @client.role.get_by_id(id: 'wrong_id')
     @client.role.delete(id: 'wrong_id')
 
@@ -33,6 +37,7 @@ class RoleTest < Minitest::Test
 
   def test_get_by_id
     create_test_role
+
     refute_nil @client.role.get_by_id(id: ROLE_ID) # found
     delete_test_role
 
@@ -46,6 +51,7 @@ class RoleTest < Minitest::Test
 
   def test_delete
     create_test_role
+
     refute_nil @client.role.get_by_id(id: ROLE_ID) # found
     delete_test_role
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 
 module Kibana
@@ -15,13 +17,13 @@ module Kibana
 
       options.merge({
         type: 'dashboard',
-        references: references,
+        references:,
         attributes: {
-          title: title,
-          description: description,
+          title:,
+          description:,
           panelsJSON: panelsJSON.to_json,
           optionsJSON: optionsJSON.to_json,
-          timeRestore: timeRestore,
+          timeRestore:
           # 'kibanaSavedObjectMeta'
         }
       })
@@ -32,7 +34,7 @@ module Kibana
     # @param [String] export
     # @return [Array]
     def self.parse_ndjson(export)
-      export.lines.map{|l| JSON.parse(l) }
+      export.lines.map { |l| JSON.parse(l) }
     end
 
     # Builds an ndjson string
@@ -47,15 +49,15 @@ module Kibana
     #
     # @param [String] json
     # @return [String]
-    def self.modify_json(json, default: {}, &block)
+    def self.modify_json(json, default: {})
       parsed = json.nil? ? default : JSON.parse(json)
       yield(parsed)
       JSON.unparse(parsed)
     end
 
-    def self.modify_json_key(hash, key, &block)
-      hash[key] = modify_json(hash[key], &block)
+    def self.modify_json_key(hash, key, &)
+      hash[key] = modify_json(hash[key], &)
     end
-    
+
   end
 end

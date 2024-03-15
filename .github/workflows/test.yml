@@ -1,0 +1,25 @@
+name: Test
+
+on: [pull_request]
+
+# permissions:
+#   contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    # env:
+    #   BUNDLE_ONLY: rubocop
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Ruby 3.2.2
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2.2
+        bundler-cache: true
+
+    - name: Run Tests
+      run: bundle exec rubocop --parallel
+      # run: bundle exec rake

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class SavedObjectTest < Minitest::Test
@@ -6,17 +8,18 @@ class SavedObjectTest < Minitest::Test
   include SpaceTestHelper
 
   def test_tag_fixture
-    {"attributes":{"color":"#15661e","description":"asdf","name":"hey"},"type":"tag"}
+    {attributes: {color: '#15661e', description: 'asdf', name: 'hey'}, type: 'tag'}
   end
 
   # tests
 
   def test_get
     @client.saved_object.with_space(SpaceTestHelper::TEST_ID) do |api|
-      assert_raises(Kibana::Transport::ApiExceptions::NotFoundError){
+      assert_raises(Kibana::Transport::ApiExceptions::NotFoundError) do
         api.get(type: 'tag', id: 'test_tag')
-      }
+      end
       api.create(type: 'tag', body: test_tag_fixture, id: 'test_tag')
+
       assert_instance_of Hash, api.get(type: 'tag', id: 'test_tag')
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kibana
   module API
 
@@ -29,7 +31,7 @@ module Kibana
       #   "disabledFeatures": [],
       #   "imageUrl": ""
       # }
-      
+
       # Creates a Kibana space
       # @param body [Object] Space body
       # @return [Object] Parsed response
@@ -39,12 +41,12 @@ module Kibana
         validate_datatypes(body)
         request(
           http_method: :post,
-          endpoint: "api/spaces/space",
-          body: body
+          endpoint: 'api/spaces/space',
+          body:
         )
       end
 
-      # Updates a Kibana space 
+      # Updates a Kibana space
       # @param id [String] Space id
       # @param body [Object] Space body
       # @return [Object] Parsed response
@@ -54,11 +56,11 @@ module Kibana
         request(
           http_method: :put,
           endpoint: "api/spaces/space/#{id}",
-          body: body
+          body:
         )
       end
 
-      # Gets a Kibana space 
+      # Gets a Kibana space
       # @param id [String] Space id
       # @return [Object] Parsed response
       def get_by_id(id)
@@ -73,11 +75,11 @@ module Kibana
       def get_all
         request(
           http_method: :get,
-          endpoint: "api/spaces/space"
+          endpoint: 'api/spaces/space'
         )
       end
 
-      # Deletes a Kibana space 
+      # Deletes a Kibana space
       # @param id [String] Space id
       # @return [Object] Parsed response
       def delete(id)
@@ -89,16 +91,14 @@ module Kibana
 
       # Check presence of space
       # @param id [String] Space id
-      # @return [Boolean] 
+      # @return [Boolean]
       def exists?(id)
-        begin
-          get_by_id(id).present?
-        rescue Kibana::Transport::ApiExceptions::NotFoundError
-          false
-        end
+        get_by_id(id).present?
+      rescue Kibana::Transport::ApiExceptions::NotFoundError
+        false
       end
 
-      # TODO Copy saved objects to space
+      # TODO: Copy saved objects to space
       # TODO Resolve copy to space conflicts
 
       # In some cases (like a recently created space) this method
@@ -108,7 +108,7 @@ module Kibana
       # @return [Object|nil] latest config saved object or nil
       def get_latest_config(id)
         data = client.saved_object.with_space(id) do |c|
-          c.find( {params: {type: [:'config']}} )
+          c.find({params: {type: [:config]}})
         end
         data['saved_objects'].max_by do |object|
           semantic_version_to_f(object['id'])
@@ -121,16 +121,23 @@ module Kibana
       # @param includeReferences [Boolean]
       # @param overwrite [Boolean]
       # @return [Object] results from every spaces {test_space: {success: true, successCount: 1}}
-      def copy_saved_objects_to_spaces(source_space:, target_spaces:, objects:, includeReferences: true, overwrite: true, createNewCopies: false)
+      def copy_saved_objects_to_spaces(
+        source_space:,
+        target_spaces:,
+        objects:,
+        includeReferences: true,
+        overwrite: true,
+        createNewCopies: false
+      )
         request(
           http_method: :post,
           endpoint: "/s/#{source_space}/api/spaces/_copy_saved_objects",
           body: {
-            'objects': objects,
-            'spaces': target_spaces,
-            'includeReferences': includeReferences,
-            'overwrite': overwrite,
-            'createNewCopies': createNewCopies
+            objects:,
+            spaces: target_spaces,
+            includeReferences:,
+            overwrite:,
+            createNewCopies:
           }
         )
       end
@@ -138,43 +145,51 @@ module Kibana
       private
 
       def semantic_version_to_f(version)
-        version = version.sub(/\A[^\d]/, '') #remove first character if not digit
-        version.split('.').map(&:to_i)
-                .each_with_index
-                .reduce(0){ |sum,arr| sum + (arr[0] / 100.0 ** arr[1]) }
-                .round(4)
+        version = version.sub(/\A[^\d]/, '') # remove first character if not digit
+        version.split('.')
+               .map(&:to_i)
+               .each_with_index
+               .reduce(0) { |sum, arr| sum + (arr[0] / (100.0**arr[1])) }
+               .round(4)
       end
 
       def validate_required(body)
-        raise ArgumentError, "Required argument 'id' missing" unless body[:id]
-        raise ArgumentError, "Required argument 'name' missing" unless body[:name]
+        raise ArgumentError.new("Required argument 'id' missing") unless body[:id]
+        raise ArgumentError.new("Required argument 'name' missing") unless body[:name]
+
         validate_datatypes(body)
       end
 
       def validate_datatypes(body)
-        raise ArgumentError, "'id' must be a string or a hash" if body[:id] && ![String, Hash].include?(body[:id].class)
-        raise ArgumentError, "'name' must be a string" if body[:name] && !body[:name].is_a?(String)
-        raise ArgumentError, "'description' must be a string" if body[:description] && !body[:description].is_a?(String)
+        if body[:id] && ![String, Hash].include?(body[:id].class)
+          raise ArgumentError.new("'id' must be a string or a hash")
+        end
+
+        raise ArgumentError.new("'name' must be a string") if body[:name] && !body[:name].is_a?(String)
+
+        if body[:description] && !body[:description].is_a?(String)
+          raise ArgumentError.new("'description' must be a string")
+        end
+
         if body[:disabledFeatures]
-          raise ArgumentError, "'disabledFeatures' must be an array" if !body[:disabledFeatures].is_a?(Array)
+          raise ArgumentError.new("'disabledFeatures' must be an array") unless body[:disabledFeatures].is_a?(Array)
+
           body[:disabledFeatures].each do |f|
-            if !FEATURES.include?(f.to_sym)
-              raise ArgumentError, "'#{f}' is not a valid feature"
-            end
+            raise ArgumentError.new("'#{f}' is not a valid feature") unless FEATURES.include?(f.to_sym)
           end
         end
-        raise ArgumentError, "'initials' must be a string" if body[:initials] && !body[:initials].is_a?(String)
-        raise ArgumentError, "'color' must be a string" if body[:color] && !body[:color].is_a?(String)
-        raise ArgumentError, "'imageUrl' must be a string" if body[:imageUrl] && !body[:imageUrl].is_a?(String)
+        raise ArgumentError.new("'initials' must be a string") if body[:initials] && !body[:initials].is_a?(String)
+        raise ArgumentError.new("'color' must be a string") if body[:color] && !body[:color].is_a?(String)
+        raise ArgumentError.new("'imageUrl' must be a string") if body[:imageUrl] && !body[:imageUrl].is_a?(String)
       end
 
       def symbolize_and_filter(body)
-        body.transform_keys{|k| k.to_sym}.slice(
+        body.transform_keys(&:to_sym).slice(
           :id, :name, :description, :disabledFeatures, :initials, :color, :imageUrl
         )
       end
-      
+
     end
-    
+
   end
 end

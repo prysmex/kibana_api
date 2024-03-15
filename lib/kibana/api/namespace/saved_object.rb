@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Kibana
   module API
-    
+
     module SavedObject
       # Proxy method for {SavedObjectClient}, available in the receiving object
       def saved_object
@@ -13,27 +15,27 @@ module Kibana
 
       include Kibana::API::Spaceable
 
-      TYPES = [
-        :tag,
-        :config,
-        :'index-pattern',
-        :visualization,
-        :'timelion-sheet',
-        :search,
-        :dashboard,
-        :url,
-        :query,
-        :map,
-        :'canvas-element',
-        :'canvas-workpad',
-        :'canvas-workpad-template',
-        :lens,
-        :'infrastructure-ui-source',
-        :'metrics-explorer-view',
-        :'inventory-view'
+      TYPES = %i[
+        tag
+        config
+        index-pattern
+        visualization
+        timelion-sheet
+        search
+        dashboard
+        url
+        query
+        map
+        canvas-element
+        canvas-workpad
+        canvas-workpad-template
+        lens
+        infrastructure-ui-source
+        metrics-explorer-view
+        inventory-view
       ].freeze
 
-      # Retrieves a single Kibana saved object 
+      # Retrieves a single Kibana saved object
       #
       # @param id [String]
       # @param type [String]
@@ -66,7 +68,7 @@ module Kibana
         request(**args.merge(
           http_method: :post,
           endpoint: "#{current_space_api_namespace}/saved_objects/_bulk_get",
-          body: body
+          body:
         ))
       end
 
@@ -87,14 +89,15 @@ module Kibana
       # @return [Hash]
       def find(params:, **args)
         params = symbolize_keys(params).slice(
-          :type, :per_page, :page, :search, :default_search_operator, :search_fields, :fields, :sort_field, :has_reference, :filter
+          :type, :per_page, :page, :search, :default_search_operator,
+          :search_fields, :fields, :sort_field, :has_reference, :filter
         )
         _validate_type(params[:type]) if params.key?(:type)
 
         request(**args.merge(
           http_method: :get,
           endpoint: "#{current_space_api_namespace}/saved_objects/_find",
-          params: params
+          params:
         ))
       end
 
@@ -110,13 +113,16 @@ module Kibana
         page = 1
         data_array = []
 
-        while page < max_pages  do
-          data = find(**args.merge({
-            params: params.merge({page: page})
-          }))
+        while page < max_pages
+          data = find(
+            **args.merge({
+              params: params.merge({page:})
+            })
+          )
           parsed_data = data.is_a?(::Hash) ? data : JSON.parse(data)
           page += 1
-          break if parsed_data['saved_objects'].size == 0
+          break if parsed_data['saved_objects'].empty?
+
           yield(data, parsed_data) if block_given?
           data_array.push(data)
         end
@@ -140,16 +146,16 @@ module Kibana
         body = symbolize_keys(body).slice(:attributes, :references, :initialNamespaces)
         params = symbolize_keys(params).slice(:overwrite)
         endpoint = if id
-          "#{current_space_api_namespace}/saved_objects/#{type}/#{id}"
-        else
-          "#{current_space_api_namespace}/saved_objects/#{type}"
-        end
+                     "#{current_space_api_namespace}/saved_objects/#{type}/#{id}"
+                    else
+                      "#{current_space_api_namespace}/saved_objects/#{type}"
+                    end
 
         request(**args.merge(
           http_method: :post,
-          endpoint: endpoint,
-          params: params,
-          body: body
+          endpoint:,
+          params:,
+          body:
         ))
       end
 
@@ -175,8 +181,8 @@ module Kibana
         request(**args.merge(
           http_method: :post,
           endpoint: "#{current_space_api_namespace}/saved_objects/_bulk_create",
-          params: params,
-          body: body
+          params:,
+          body:
         ))
       end
 
@@ -196,7 +202,7 @@ module Kibana
         request(**args.merge(
           http_method: :put,
           endpoint: "#{current_space_api_namespace}/saved_objects/#{type}/#{id}",
-          body: body
+          body:
         ))
       end
 
@@ -213,7 +219,7 @@ module Kibana
         request(**args.merge(
           http_method: :delete,
           endpoint: "#{current_space_api_namespace}/saved_objects/#{type}/#{id}",
-          params: params
+          params:
         ))
       end
 
@@ -243,7 +249,7 @@ module Kibana
         request(**args.merge(
           http_method: :post,
           endpoint: "#{current_space_api_namespace}/saved_objects/_export",
-          body: body,
+          body:,
           raw: true
         ))
       end
@@ -266,7 +272,7 @@ module Kibana
           request(**args.merge(
             http_method: :post,
             endpoint: "#{current_space_api_namespace}/saved_objects/_import",
-            params: params,
+            params:,
             body: {
               file: io_file
             },
@@ -274,12 +280,12 @@ module Kibana
             multipart: true
           ))
         ensure
-           file.close
-           file.unlink
+          file.close
+          file.unlink
         end
       end
 
-      # # Resolve import errors from Kibana saved object 
+      # # Resolve import errors from Kibana saved object
       # #
       # # @param body [Hash] Same given to #import API
       # # @param params [Hash] query params
@@ -288,7 +294,7 @@ module Kibana
       # def resolve_import_errors(body:, params: {}, **args)
       #   params = symbolize_keys(params).slice(:createNewCopies)
       #   body = symbolize_keys(body).slice(:file, :retries)
-        
+
       #   request(**args.merge(
       #     http_method: :post,
       #     endpoint: "#{current_space_api_namespace}/saved_objects/_resolve_import_errors",
@@ -304,13 +310,11 @@ module Kibana
       # @param type [String]
       # @param id [String]
       # @param options [Hash] query params
-      # @return [Boolean] 
+      # @return [Boolean]
       def exists?(**args)
-        begin
-          get(**args).present?
-        rescue Kibana::Transport::ApiExceptions::NotFoundError
-          false
-        end
+        get(**args).present?
+      rescue Kibana::Transport::ApiExceptions::NotFoundError
+        false
       end
 
       # Returns related saved_objects for a saved_object
@@ -327,7 +331,7 @@ module Kibana
         request(**args.merge(
           http_method: :get,
           endpoint: "#{current_space_api_namespace}/kibana/management/saved_objects/relationships/#{type}/#{id}",
-          params: params
+          params:
         ))
       end
 
@@ -342,7 +346,7 @@ module Kibana
         request(**args.merge(
           http_method: :post,
           endpoint: "#{current_space_api_namespace}/kibana/management/saved_objects/scroll/counts",
-          body: body
+          body:
         ))
       end
 
@@ -351,38 +355,39 @@ module Kibana
       # related to any dashboard
       #
       # @example to find orphan visualizations from dashboards
-      # 
+      #
       #   find_all_orphans(params: {type: [:visualization], fields: [:title]}, parent_type: :dashboard)
       #
       # @param params [Hash] (same as #find method)
       # @param parent_type [Symbol] the type of the parent object
       # @return [Array] of saved objects
-      def find_orphans(params: {}, parent_type:)
-        raise ArgumentError, "params[:type] must be an array of valid types" unless params[:type].is_a?(::Array)
+      def find_orphans(parent_type:, params: {})
+        raise ArgumentError.new('params[:type] must be an array of valid types') unless params[:type].is_a?(::Array)
 
         # get all objects
-        all_objects = find_each_page({params: params}).map do |resp|
+        all_objects = find_each_page({params:}).map do |resp|
           resp['saved_objects']
         end.flatten
 
-        #get all parents
+        # get all parents
         all_parents = find_each_page({params: {type: [parent_type]}}).map do |resp|
           resp['saved_objects']
         end.flatten
 
-        #get all parents children
+        # get all parents children
         all_parents_children = all_parents.inject([]) do |accum, parent|
-          related_objects = related_objects({
-            type: parent_type,
-            id: parent['id'],
-            params: {savedObjectTypes: params[:type]}
-          })
-          accum.concat(related_objects)
+          accum.concat(
+            related_objects({
+              type: parent_type,
+              id: parent['id'],
+              params: {savedObjectTypes: params[:type]}
+            })
+          )
         end
 
-        #get orphans
+        # get orphans
         all_objects.select do |obj|
-          all_parents_children.find{|v| v['id'] == obj['id']}.nil?
+          all_parents_children.find { |v| v['id'] == obj['id'] }.nil?
         end
       end
 
@@ -390,13 +395,13 @@ module Kibana
       #
       # @param [String] title of the index pattern, not the id
       # @return [Object] a hash containing all fields under 'fields' key
-      def fields_for_index_pattern(pattern, meta_fields=[:_source, :_id, :_type, :_index, :_score])
-        data = request(
+      def fields_for_index_pattern(pattern, meta_fields = %i[_source _id _type _index _score])
+        request(
           http_method: :get,
           endpoint: '/api/index_patterns/_fields_for_wildcard',
           params: {
-            pattern: pattern,
-            meta_fields: meta_fields
+            pattern:,
+            meta_fields:
           }
         )
       end
@@ -404,11 +409,9 @@ module Kibana
       private
 
       def _validate_type(types)
-        types = types.is_a?(::Array) ? types : [types]
+        types = [types] unless types.is_a?(::Array)
         types.each do |type|
-          if !TYPES.include?(type.to_sym)
-            raise ArgumentError, "SavedObject type '#{type}' is not valid"
-          end
+          raise ArgumentError.new("SavedObject type '#{type}' is not valid") unless TYPES.include?(type.to_sym)
         end
       end
 
