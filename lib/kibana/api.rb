@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'api/base_client'
 require_relative 'api/spaceable'
 require_relative 'api/namespace/canvas'

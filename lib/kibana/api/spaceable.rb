@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kibana
   module API
     module Spaceable
@@ -13,7 +15,7 @@ module Kibana
       def with_space(space_id)
         prev_space = @space_id
         @space_id = space_id
-        return yield(self)
+        yield(self)
       ensure
         @space_id = prev_space
       end
@@ -36,12 +38,12 @@ module Kibana
 
       def api_namespace_for_space(space_id)
         if space_id.nil? || space_id.to_s == 'default'
-          "api"
+          'api'
         else
           "s/#{space_id}/api"
         end
       end
-      
+
     end
   end
 end

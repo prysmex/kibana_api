@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kibana
   module API
 
@@ -90,7 +92,7 @@ module Kibana
         request(**args.merge(
           http_method: :put,
           endpoint: "api/security/role/#{id}",
-          body: body
+          body:
         ))
       end
 
@@ -111,7 +113,7 @@ module Kibana
       def get_all(**args)
         request(**args.merge(
           http_method: :get,
-          endpoint: "api/security/role"
+          endpoint: 'api/security/role'
         ))
       end
 

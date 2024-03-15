@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kibana
   module API
 
@@ -10,16 +12,16 @@ module Kibana
     end
 
     class FeaturesClient < BaseClient
-      
+
       # Returns the Kibana features
       #
       # @return [Array]
       def features(**args)
         request(**args.merge(
           http_method: :get,
-          endpoint: "api/features"
+          endpoint: 'api/features'
         ))
-      end 
+      end
     end
 
   end

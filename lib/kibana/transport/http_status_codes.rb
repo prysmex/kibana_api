@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Kibana
   module Transport
     module HttpStatusCodes
       HTTP_OK_CODE = 200
       HTTP_NO_CONTENT = 204
-      
+
       HTTP_BAD_REQUEST_CODE = 400
       HTTP_UNAUTHORIZED_CODE = 401
       HTTP_FORBIDDEN_CODE = 403

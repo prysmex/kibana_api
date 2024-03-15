@@ -1,0 +1,12 @@
+###########################################################
+#################### Rubocop Minitest #####################
+###########################################################
+
+Minitest/AssertTruthy:
+  Enabled: false
+
+Minitest/RefuteFalse:
+  Enabled: false
+
+Minitest/MultipleAssertions:
+  Max: 4
