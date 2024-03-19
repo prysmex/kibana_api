@@ -33,8 +33,8 @@ module Kibana
     # }
     #
     class PanelJSON < Hash
-      include SuperHash::Hasher
-      instance_variable_set('@allow_dynamic_attributes', true)
+      # include SuperHash::Hasher
+      # instance_variable_set(:@allow_dynamic_attributes, true)
 
       # Distance of right side of panel to left side of dashboard
       #
@@ -86,8 +86,8 @@ module Kibana
     # rubocop:enable Layout/LineLength
     #
     class Dashboard < Hash
-      include SuperHash::Hasher
-      instance_variable_set('@allow_dynamic_attributes', true)
+      # include SuperHash::Hasher
+      instance_variable_set(:@allow_dynamic_attributes, true)
 
       DASHBOARD_MAX_WIDTH = 48
 
@@ -225,7 +225,7 @@ module Kibana
         # find first available space
         matrix.each_with_index do |row, row_i|
           # skip row since not enought 0s
-          next if row.select { |i| i == 0 }.size < w
+          next if row.count { |i| i == 0 } < w
 
           column_i = 0
           while column_i <= DASHBOARD_MAX_WIDTH
