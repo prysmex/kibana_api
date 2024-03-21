@@ -1,11 +1,27 @@
 # frozen_string_literal: true
 
 require 'securerandom'
-require 'super_hash'
 
 module Kibana
   CLIENT_VERSION = '8.12.1'
   module Dashboard
+
+    # @note This could be removed if classes inherit from ActiveSupport::HashWithIndifferentAccess
+    #
+    # Allows a hash to be initialized via .new({...})
+    module HashInit
+      def initialize(init_value = {})
+        # iterate init_value and set all values
+        if init_value.respond_to?(:each_pair)
+          init_value.each do |k, v|
+            self[k] = v
+          end
+        else
+          super
+        end
+      end
+    end
+
     # PANELS_JSON_VISUALIZATION_VERSION = '8.9.1'.freeze
     CORE_MIGRATION_VERSION = '8.8.0'
     TYPE_MIGRATION_VERSION = '8.9.0'
@@ -33,8 +49,7 @@ module Kibana
     # }
     #
     class PanelJSON < Hash
-      # include SuperHash::Hasher
-      # instance_variable_set(:@allow_dynamic_attributes, true)
+      include HashInit
 
       # Distance of right side of panel to left side of dashboard
       #
@@ -86,8 +101,7 @@ module Kibana
     # rubocop:enable Layout/LineLength
     #
     class Dashboard < Hash
-      # include SuperHash::Hasher
-      instance_variable_set(:@allow_dynamic_attributes, true)
+      include HashInit
 
       DASHBOARD_MAX_WIDTH = 48
 
@@ -328,9 +342,9 @@ module Kibana
 
         # add reference to the dashboard 'references' key
         self['references'].push({
-          id: reference_id,
-          name: "#{panel_id}:panel_#{panel_id}",
-          type: 'visualization'
+          'id' => reference_id,
+          'name' => "#{panel_id}:panel_#{panel_id}",
+          'type' => 'visualization'
         })
       end
 
@@ -478,9 +492,9 @@ module Kibana
         return false if self['references'].find { |i| i['id'] == id }
 
         self['references'].push({
-          id: id.to_s,
-          name: "tag-#{id}",
-          type: 'tag'
+          'id' => id.to_s,
+          'name' => "tag-#{id}",
+          'type' => 'tag'
         })
       end
 
