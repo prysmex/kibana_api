@@ -3,7 +3,7 @@
 require 'securerandom'
 
 module Kibana
-  CLIENT_VERSION = '8.13.3'
+  CLIENT_VERSION = '8.14.0'
   module Dashboard
 
     # @note This could be removed if classes inherit from ActiveSupport::HashWithIndifferentAccess
@@ -24,7 +24,7 @@ module Kibana
 
     # PANELS_JSON_VISUALIZATION_VERSION = '8.9.1'.freeze
     CORE_MIGRATION_VERSION = '8.8.0'
-    TYPE_MIGRATION_VERSION = '8.9.0'
+    TYPE_MIGRATION_VERSION = '10.2.0'
 
     # Backing class for a single object inside a dashboard's attributes.panelsJSON array
     #
@@ -90,11 +90,12 @@ module Kibana
     #   },
     #   "coreMigrationVersion": CORE_MIGRATION_VERSION,
     #   "created_at": "2023-03-30T23:07:32.522Z",
+    #   "created_by": "u_mGBROF_q5bmFCATbLXAcCwKa0k8JvONAwSruelyKA5E_0",
     #   "id": "a6be78a0-cf4f-11ed-b514-dddd0f14c058",
-    #   "typeMigrationVersion": TYPE_MIGRATION_VERSION,
     #   "managed": false,
     #   "references": [],
     #   "type": "dashboard",
+    #   "typeMigrationVersion": TYPE_MIGRATION_VERSION,
     #   "updated_at": "2023-03-30T23:07:32.522Z",
     #   "version": "WzMwOSwxXQ=="
     # }
