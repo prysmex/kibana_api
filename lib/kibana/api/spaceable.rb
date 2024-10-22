@@ -8,7 +8,7 @@ module Kibana
 
       def initialize(*args)
         @space_id = 'default'
-        super(*args)
+        super
       end
 
       # temporarily set the space context
