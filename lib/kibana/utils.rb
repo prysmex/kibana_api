@@ -21,8 +21,8 @@ module Kibana
         attributes: {
           title:,
           description:,
-          panelsJSON: panelsJSON.to_json,
-          optionsJSON: optionsJSON.to_json,
+          panelsJSON: Oj.dump(panelsJSON),
+          optionsJSON: Oj.dump(optionsJSON),
           timeRestore:
           # 'kibanaSavedObjectMeta'
         }
@@ -34,7 +34,7 @@ module Kibana
     # @param [String] export
     # @return [Array]
     def self.parse_ndjson(export)
-      export.lines.map { |l| JSON.parse(l) }
+      export.lines.map { |l| Oj.load(l) }
     end
 
     # Builds an ndjson string
@@ -50,9 +50,9 @@ module Kibana
     # @param [String] json
     # @return [String]
     def self.modify_json(json, default: {})
-      parsed = json.nil? ? default : JSON.parse(json)
+      parsed = json.nil? ? default : Oj.load(json)
       yield(parsed)
-      JSON.unparse(parsed)
+      JSON.unparse(parsed) # TODO: why unparse?
     end
 
     def self.modify_json_key(hash, key, &)

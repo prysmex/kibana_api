@@ -18,7 +18,7 @@ module Kibana
       # Simple wrapper to execute the http method on the connection object
       # use block to customize the connection object
       def request(http_method:, endpoint:, params: {}, body: {}, raw_body: nil, raw: false, multipart: false)
-        body = body.to_json unless raw_body
+        body = Oj.dump(body) unless raw_body
 
         response = connection.public_send(http_method, endpoint) do |conn|
           conn.params = conn.params.merge(params)

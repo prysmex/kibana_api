@@ -119,7 +119,7 @@ module Kibana
               params: params.merge({page:})
             })
           )
-          parsed_data = data.is_a?(::Hash) ? data : JSON.parse(data)
+          parsed_data = data.is_a?(::Hash) ? data : Oj.load(data)
           page += 1
           break if parsed_data['saved_objects'].empty?
 

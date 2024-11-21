@@ -120,7 +120,7 @@ module Kibana
       #
       # @return [Hash]
       def parsed_panels_json
-        JSON.parse(get_attribute('panelsJSON')).map { |o| PanelJSON.new(o) }
+        Oj.load(get_attribute('panelsJSON')).map { |o| PanelJSON.new(o) }
       end
 
       ################
@@ -339,7 +339,7 @@ module Kibana
 
         # set 'panelsJSON' key
         parsed_panels_json.push(panel_hash)
-        set_attribute('panelsJSON', parsed_panels_json.to_json)
+        set_attribute('panelsJSON', Oj.dump(parsed_panels_json))
 
         # add reference to the dashboard 'references' key
         self['references'].push({
@@ -393,8 +393,8 @@ module Kibana
 
         # remove from panelsJSON
         parsed_panels_json = self.parsed_panels_json
-        new_panels_json = parsed_panels_json.reject { |r| r['gridData']['i'] == i }.to_json
-        set_attribute('panelsJSON', new_panels_json)
+        new_panels_json = parsed_panels_json.reject { |r| r['gridData']['i'] == i }
+        set_attribute('panelsJSON', Oj.dump(new_panels_json))
       end
 
       # def remove_visualization_at
@@ -420,7 +420,7 @@ module Kibana
       # @param index_pattern_id [String]
       # @return mutated dashboard with appended filter
       def append_filter(key:, type:, value:, index_pattern_id:, negate: false, disabled: false, label: nil)
-        dashboard_filter = JSON.parse(self['attributes']['kibanaSavedObjectMeta']['searchSourceJSON'])
+        dashboard_filter = Oj.load(self['attributes']['kibanaSavedObjectMeta']['searchSourceJSON'])
 
         # filter position in dashboard (index)
         filter_count = dashboard_filter['filter'].size
@@ -471,7 +471,7 @@ module Kibana
 
         # stringify and set to dashboard
         dashboard_filter['filter'].push(filter)
-        self['attributes']['kibanaSavedObjectMeta']['searchSourceJSON'] = dashboard_filter.to_json
+        self['attributes']['kibanaSavedObjectMeta']['searchSourceJSON'] = Oj.dump(dashboard_filter)
 
         # add reference to dashboard
         self['references'].push({
