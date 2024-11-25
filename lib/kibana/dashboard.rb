@@ -3,7 +3,7 @@
 require 'securerandom'
 
 module Kibana
-  CLIENT_VERSION = '8.15.0'
+  CLIENT_VERSION = '8.16.1'
   module Dashboard
 
     # @note This could be removed if classes inherit from ActiveSupport::HashWithIndifferentAccess
@@ -29,23 +29,25 @@ module Kibana
     # Backing class for a single object inside a dashboard's attributes.panelsJSON array
     #
     # {
-    #   'version': PANELS_JSON_VISUALIZATION_VERSION,
     #   'type': 'visualization',
     #   'gridData': {
     #     'x': 0,
     #     'y': 0,
     #     'w': 10,
     #     'h': 5,
-    #     'i': 0bbdf49d-40e5-485c-9977-29d3293bc2d6
+    #     'i': '0bbdf49d-40e5-485c-9977-29d3293bc2d6'
     #   },
-    #   'panelIndex': 0bbdf49d-40e5-485c-9977-29d3293bc2d6,
+    #   'panelIndex': '0bbdf49d-40e5-485c-9977-29d3293bc2d6',
     #   'embeddableConfig': {
-    #     'enhancements': {},
+    #     'description': '',
+    #     'enhancements': { 'dynamicActions': { 'events': [] } },
     #     'hidePanelTitles': true,
-    #     'savedVis': {}
+    #     'uiState': {
+    #       'vis': { 'legendOpen': false, 'colors': { 'Count': '#d6bf57' } }
+    #     }
     #   },
     #   'title': 'Some dashboard specific title',
-    #   'panelRefName': "panel_0bbdf49d-40e5-485c-9977-29d3293bc2d6"
+    #   'panelRefName': 'panel_0bbdf49d-40e5-485c-9977-29d3293bc2d6'
     # }
     #
     class PanelJSON < Hash
@@ -78,14 +80,23 @@ module Kibana
     # rubocop:disable Layout/LineLength
     # {
     #   "attributes": {
-    #     "description": "Empty template dashboard",
-    #     "kibanaSavedObjectMeta": {
-    #       "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
-    #     },
-    #     "optionsJSON": "{\"useMargins\":true,\"syncColors\":false,\"syncCursor\":true,\"syncTooltips\":false,\"hidePanelTitles\":false}",
-    #     "panelsJSON": "[]",
+    #     "controlGroupInput":
+    #       {
+    #         "chainingSystem": "HIERARCHICAL",
+    #         "controlStyle": "oneLine",
+    #         "ignoreParentSettingsJSON": '{"ignoreFilters":false,"ignoreQuery":false,"ignoreTimerange":false,"ignoreValidations":false}',
+    #         "panelsJSON": "{}",
+    #         "showApplySelections": false,
+    #       },
+    #     "description": "",
+    #     "kibanaSavedObjectMeta":
+    #       {
+    #         "searchSourceJSON": '{"query":{"query":"","language":"kuery"},"filter":[]}',
+    #       },
+    #     "optionsJSON": '{"useMargins":true,"syncColors":false,"syncCursor":true,"syncTooltips":false,"hidePanelTitles":false}',
+    #     "panelsJSON": '[]',
     #     "timeRestore": false,
-    #     "title": "empty",
+    #     "title": "test",
     #     "version": 1
     #   },
     #   "coreMigrationVersion": CORE_MIGRATION_VERSION,
@@ -97,6 +108,7 @@ module Kibana
     #   "type": "dashboard",
     #   "typeMigrationVersion": TYPE_MIGRATION_VERSION,
     #   "updated_at": "2023-03-30T23:07:32.522Z",
+    #   "updated_by": "u_mGBROF_q5bmFCATbLXAcCwKa0k8JvONAwSruelyKA5E_0",
     #   "version": "WzMwOSwxXQ=="
     # }
     # rubocop:enable Layout/LineLength

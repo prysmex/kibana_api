@@ -14,11 +14,12 @@ module Kibana
     class SpaceClient < BaseClient
 
       FEATURES = %i[
-        actions advancedSettings apm canvas dashboard dev_tools discover
+        actions advancedSettings aiAssistantManagementSelection apm canvas dashboard dataQuality dev_tools discover
         enterpriseSearch filesManagement filesSharedImage fleet fleetv2
-        generalCases graph guidedOnboardingFeature indexPatterns infrastructure
-        logs maintenanceWindow maps ml monitoring observabilityCases osquery
-        rulesSettings savedObjectsManagement savedObjectsTagging securitySolutionCases
+        generalCases graph guidedOnboardingFeature indexPatterns infrastructure inventory
+        logs maintenanceWindow maps ml monitoring observabilityAIAssistant observabilityCases osquery
+        rulesSettings savedObjectsManagement savedObjectsTagging savedQueryManagement
+        searchInferenceEndpoints securitySolutionAssistant securitySolutionAttackDiscovery securitySolutionCases
         siem slo stackAlerts uptime visualize
       ].freeze
 
