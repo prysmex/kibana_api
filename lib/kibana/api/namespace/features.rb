@@ -17,10 +17,11 @@ module Kibana
       #
       # @return [Array]
       def features(**args)
-        request(**args.merge(
+        request(
+          **args,
           http_method: :get,
           endpoint: 'api/features'
-        ))
+        )
       end
     end
 

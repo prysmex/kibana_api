@@ -44,10 +44,11 @@ module Kibana
       def get(type:, id:, **args)
         _validate_type(type)
 
-        request(**args.merge(
+        request(
+          **args,
           http_method: :get,
           endpoint: "#{current_space_api_namespace}/saved_objects/#{type}/#{id}"
-        ))
+        )
       end
 
       # Retrieves multiple Kibana saved objects
@@ -65,11 +66,12 @@ module Kibana
           symbolize_keys(obj).slice(:type, :id, :fields)
         end
 
-        request(**args.merge(
+        request(
+          **args,
           http_method: :post,
           endpoint: "#{current_space_api_namespace}/saved_objects/_bulk_get",
           body:
-        ))
+        )
       end
 
       # Retrieves paginated Kibana saved objects
@@ -94,11 +96,12 @@ module Kibana
         )
         _validate_type(params[:type]) if params.key?(:type)
 
-        request(**args.merge(
+        request(
+          **args,
           http_method: :get,
           endpoint: "#{current_space_api_namespace}/saved_objects/_find",
           params:
-        ))
+        )
       end
 
       # Iterates pages for a find request, yields a block to give access to response
@@ -114,11 +117,7 @@ module Kibana
         data_array = []
 
         while page < max_pages
-          data = find(
-            **args.merge({
-              params: params.merge({page:})
-            })
-          )
+          data = find(**args, params: params.merge({page:}))
           parsed_data = data.is_a?(::Hash) ? data : Oj.load(data)
           page += 1
           break if parsed_data['saved_objects'].empty?
@@ -151,12 +150,13 @@ module Kibana
                       "#{current_space_api_namespace}/saved_objects/#{type}"
                     end
 
-        request(**args.merge(
+        request(
+          **args,
           http_method: :post,
           endpoint:,
           params:,
           body:
-        ))
+        )
       end
 
       # Creates multiple Kibana saved object
@@ -178,12 +178,13 @@ module Kibana
         end
         params = symbolize_keys(params).slice(:overwrite)
 
-        request(**args.merge(
+        request(
+          **args,
           http_method: :post,
           endpoint: "#{current_space_api_namespace}/saved_objects/_bulk_create",
           params:,
           body:
-        ))
+        )
       end
 
       # Updates a Kibana saved object
@@ -199,11 +200,12 @@ module Kibana
       def update(type:, id:, body:, **args)
         body = symbolize_keys(body).slice(:attributes, :references, :upsert)
 
-        request(**args.merge(
+        request(
+          **args,
           http_method: :put,
           endpoint: "#{current_space_api_namespace}/saved_objects/#{type}/#{id}",
           body:
-        ))
+        )
       end
 
       # Deletes a Kibana saved object
@@ -216,11 +218,12 @@ module Kibana
       def delete(id:, type:, params: {}, **args)
         params = symbolize_keys(params).slice(:force)
 
-        request(**args.merge(
+        request(
+          **args,
           http_method: :delete,
           endpoint: "#{current_space_api_namespace}/saved_objects/#{type}/#{id}",
           params:
-        ))
+        )
       end
 
       # Deletes all objects that match
@@ -246,12 +249,13 @@ module Kibana
       def export(body:, **args)
         body = symbolize_keys(body).slice(:type, :objects, :includeReferencesDeep, :excludeExportDetails)
 
-        request(**args.merge(
+        request(
+          **args,
           http_method: :post,
           endpoint: "#{current_space_api_namespace}/saved_objects/_export",
           body:,
           raw: true
-        ))
+        )
       end
 
       # Imports Kibana saved object
@@ -269,7 +273,8 @@ module Kibana
           file.write(body)
           file.rewind
           io_file = Faraday::FilePart.new(file, 'json')
-          request(**args.merge(
+          request(
+            **args,
             http_method: :post,
             endpoint: "#{current_space_api_namespace}/saved_objects/_import",
             params:,
@@ -278,7 +283,7 @@ module Kibana
             },
             raw_body: true,
             multipart: true
-          ))
+          )
         ensure
           file.close
           file.unlink
@@ -328,11 +333,12 @@ module Kibana
         params = symbolize_keys(params).slice(:savedObjectTypes)
         _validate_type(type)
 
-        request(**args.merge(
+        request(
+          **args,
           http_method: :get,
           endpoint: "#{current_space_api_namespace}/kibana/management/saved_objects/relationships/#{type}/#{id}",
           params:
-        ))
+        )
       end
 
       # Get count of types of visualizations
@@ -343,11 +349,12 @@ module Kibana
       def counts(body:, **args)
         body = symbolize_keys(body).slice(:typesToInclude)
 
-        request(**args.merge(
+        request(
+          **args,
           http_method: :post,
           endpoint: "#{current_space_api_namespace}/kibana/management/saved_objects/scroll/counts",
           body:
-        ))
+        )
       end
 
       # Returns al saved_objects that hash no parent with another type

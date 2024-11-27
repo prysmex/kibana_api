@@ -89,11 +89,12 @@ module Kibana
       def put(id:, body:, **args)
         body = symbolize_keys(body).slice(:metadata, :elasticsearch, :kibana)
 
-        request(**args.merge(
+        request(
+          **args,
           http_method: :put,
           endpoint: "api/security/role/#{id}",
           body:
-        ))
+        )
       end
 
       # Gets a Kibana role
@@ -101,20 +102,22 @@ module Kibana
       # @param id [String] Role id
       # @return [Hash]
       def get_by_id(id:, **args)
-        request(**args.merge(
+        request(
+          **args,
           http_method: :get,
           endpoint: "api/security/role/#{id}"
-        ))
+        )
       end
 
       # Gets all Kibana roles
       #
       # @return [Array]
       def get_all(**args)
-        request(**args.merge(
+        request(
+          **args,
           http_method: :get,
           endpoint: 'api/security/role'
-        ))
+        )
       end
 
       # Deletes a Kibana role
@@ -122,10 +125,11 @@ module Kibana
       # @param id [String] Role id
       # @return [NilClass]
       def delete(id:, **args)
-        request(**args.merge(
+        request(
+          **args,
           http_method: :delete,
           endpoint: "api/security/role/#{id}"
-        ))
+        )
       end
 
     end

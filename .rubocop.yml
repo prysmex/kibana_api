@@ -1,14 +1,7 @@
 # see example at https://gist.github.com/jhass/a5ae80d87f18e53e7b56
 
-# <% unless ENV['BYPASS_RUBOCOP_TODO'] %>
-# inherit_from:
-# <% else %>
-# inherit_from:
-#   - '.rubocop-todo.yml'
-# <% end %>
-
 inherit_from:
-  - .rubocop_todo.yml
+  <%= ENV['IGNORE_RUBOCOP_TODO'] ? "# - .rubocop_todo.yml" : "- .rubocop_todo.yml" %>
   - .rubocop-minitest.yml
 
 require:
@@ -18,8 +11,8 @@ require:
 
 AllCops:
   NewCops: enable
-  # TargetRubyVersion: 2.7.8
-  # TargetRailsVersion: 6.1.4
+  # TargetRubyVersion: 3.3.6
+  # TargetRailsVersion: 7.2.2
   # Exclude:
   #   - 'Gemfile.lock'
 

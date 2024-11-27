@@ -23,11 +23,12 @@ module Kibana
       def find(params:, **args)
         params = symbolize_keys(params).slice(:perPage, :name)
 
-        request(**args.merge(
+        request(
+          **args,
           http_method: :get,
           endpoint: "#{current_space_api_namespace}/canvas/workpad/find",
           params:
-        ))
+        )
       end
     end
 
