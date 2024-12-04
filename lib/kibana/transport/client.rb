@@ -36,7 +36,7 @@ module Kibana
         if raw
           response
         else
-          JSON.parse(resp_body) unless response.status == 204 || response.resp_body == ''
+          JSON.parse(resp_body) unless response.status == 204 || resp_body == ''
         end
       end
 
