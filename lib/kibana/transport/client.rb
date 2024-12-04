@@ -27,14 +27,16 @@ module Kibana
           yield conn if block_given?
         end
 
+        resp_body = response.body
+
         unless response_successful?(response)
-          raise error_class(response).new("Code: #{response.status}, response: #{response.body}")
+          raise error_class(response).new("Code: #{response.status}, response: #{resp_body}")
         end
 
         if raw
           response
         else
-          JSON.parse(response.body)
+          JSON.parse(resp_body) unless response.status == 204 || response.resp_body == ''
         end
       end
 
