@@ -118,7 +118,7 @@ module Kibana
 
         while page < max_pages
           data = find(**args, params: params.merge({page:}))
-          parsed_data = data.is_a?(::Hash) ? data : Oj.load(data)
+          parsed_data = data.is_a?(::Hash) ? data : Oj.safe_load(data)
           page += 1
           break if parsed_data['saved_objects'].empty?
 

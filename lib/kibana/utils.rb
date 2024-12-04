@@ -34,7 +34,7 @@ module Kibana
     # @param [String] export
     # @return [Array]
     def self.parse_ndjson(export)
-      export.lines.map { |l| Oj.load(l) }
+      export.lines.map { |l| Oj.safe_load(l) }
     end
 
     # Builds an ndjson string
@@ -50,7 +50,7 @@ module Kibana
     # @param [String] json
     # @return [String]
     def self.modify_json(json, default: {})
-      parsed = json.nil? ? default : Oj.load(json)
+      parsed = json.nil? ? default : Oj.safe_load(json)
       yield(parsed)
       JSON.unparse(parsed) # TODO: why unparse?
     end

@@ -34,7 +34,7 @@ module Kibana
         if raw
           response
         else
-          Oj.load(response.body)
+          Oj.safe_load(response.body)
         end
       end
 
