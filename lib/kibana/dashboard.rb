@@ -132,7 +132,7 @@ module Kibana
       #
       # @return [Hash]
       def parsed_panels_json
-        Oj.safe_load(get_attribute('panelsJSON')).map { |o| PanelJSON.new(o) }
+        JSON.parse(get_attribute('panelsJSON')).map { |o| PanelJSON.new(o) }
       end
 
       ################
@@ -432,7 +432,7 @@ module Kibana
       # @param index_pattern_id [String]
       # @return mutated dashboard with appended filter
       def append_filter(key:, type:, value:, index_pattern_id:, negate: false, disabled: false, label: nil)
-        dashboard_filter = Oj.safe_load(self['attributes']['kibanaSavedObjectMeta']['searchSourceJSON'])
+        dashboard_filter = JSON.parse(self['attributes']['kibanaSavedObjectMeta']['searchSourceJSON'])
 
         # filter position in dashboard (index)
         filter_count = dashboard_filter['filter'].size
