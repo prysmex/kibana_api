@@ -21,11 +21,11 @@ module Kibana
       end
 
       # iterate all spaces and set context
-      def each_space(&block)
+      def each_space(&)
         return_value = {}
         client.space.get_all.each do |space|
           id = space['id']
-          return_value[id] = with_space(id, &block)
+          return_value[id] = with_space(id, &)
         end
         return_value
       end
