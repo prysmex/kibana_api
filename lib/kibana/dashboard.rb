@@ -3,7 +3,7 @@
 require 'securerandom'
 
 module Kibana
-  CLIENT_VERSION = '8.17.4'
+  CLIENT_VERSION = '8.18.1'
   module Dashboard
 
     # @note This could be removed if classes inherit from ActiveSupport::HashWithIndifferentAccess
