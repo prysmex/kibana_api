@@ -17,6 +17,7 @@ module Kibana
 
       TYPES = %i[
         tag
+        config-global
         config
         index-pattern
         visualization
