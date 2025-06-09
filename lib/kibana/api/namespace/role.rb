@@ -13,6 +13,8 @@ module Kibana
 
     #  sample as of 8.7.0
     #
+    # rubocop:disable Layout/LineLength
+    #
     # {
     #   "name": "test",
     #   "metadata": {},
@@ -98,6 +100,8 @@ module Kibana
     #   "_transform_error": [],
     #   "_unrecognized_applications": []
     # }
+    #
+    # rubocop:enable Layout/LineLength
 
     class RoleClient < BaseClient
 

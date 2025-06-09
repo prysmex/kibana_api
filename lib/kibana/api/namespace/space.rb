@@ -14,14 +14,14 @@ module Kibana
     class SpaceClient < BaseClient
 
       FEATURES = %i[
-        actions advancedSettings aiAssistantManagementSelection apm canvas dashboard_v2 dataQuality dev_tools discover_v2
-        enterpriseSearch enterpriseSearchAnalytics enterpriseSearchApplications entityManager filesManagement filesSharedImage fleet fleetv2
-        generalCasesV3 graph guidedOnboardingFeature indexPatterns infrastructure inventory
-        logs maintenanceWindow maps_v2 ml monitoring observabilityAIAssistant observabilityCasesV3 osquery
-        rulesSettings savedObjectsManagement savedObjectsTagging savedQueryManagement
-        searchInferenceEndpoints searchPlayground searchSynonyms securitySolutionAssistant securitySolutionAttackDiscovery securitySolutionCasesV3
-        securitySolutionNotes securitySolutionSiemMigrations securitySolutionTimeline siemV2 slo
-        stackAlerts uptime visualize_v2
+        actions advancedSettings aiAssistantManagementSelection apm canvas dashboard_v2 dataQuality dev_tools
+        discover_v2 enterpriseSearch enterpriseSearchAnalytics enterpriseSearchApplications entityManager
+        filesManagement filesSharedImage fleet fleetv2 generalCasesV3 graph guidedOnboardingFeature indexPatterns
+        infrastructure inventory logs maintenanceWindow maps_v2 ml monitoring observabilityAIAssistant
+        observabilityCasesV3 osquery rulesSettings savedObjectsManagement savedObjectsTagging savedQueryManagement
+        searchInferenceEndpoints searchPlayground searchSynonyms securitySolutionAssistant
+        securitySolutionAttackDiscovery securitySolutionCasesV3 securitySolutionNotes
+        securitySolutionSiemMigrations securitySolutionTimeline siemV2 slo stackAlerts uptime visualize_v2
       ].freeze
 
       # BODY_TEMPLATE = {

@@ -11,10 +11,10 @@ gemspec
 gem 'debug', '>= 1.10'
 gem 'minitest', '~> 5.25'
 gem 'minitest-reporters', '~> 1.7'
-gem 'rake', '~> 13.2'
+gem 'rake', '~> 13.3'
 
 # rubocop
-gem 'rubocop', '~> 1.74'
-gem 'rubocop-minitest', '~> 0.37'
-gem 'rubocop-performance', '~> 1.24'
+gem 'rubocop', '~> 1.76'
+gem 'rubocop-minitest', '~> 0.38'
+gem 'rubocop-performance', '~> 1.25'
 gem 'rubocop-rake', '~> 0.7'
