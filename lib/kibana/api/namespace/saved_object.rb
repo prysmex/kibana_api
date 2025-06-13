@@ -16,24 +16,42 @@ module Kibana
       include Kibana::API::Spaceable
 
       TYPES = %i[
-        tag
-        config-global
-        config
-        index-pattern
-        visualization
-        timelion-sheet
-        search
-        dashboard
-        url
-        query
-        map
+        action
+        alert
+        apm-custom-dashboards
+        apm-indices
+        apm-service-group
         canvas-element
         canvas-workpad
-        canvas-workpad-template
-        lens
+        cases
+        config
+        config-global
+        csp-rule-template
+        dashboard
+        event-annotation-group
+        graph-workspace
+        index-pattern
+        infra-custom-dashboards
+        infrastructure-monitoring-log-view
         infrastructure-ui-source
-        metrics-explorer-view
         inventory-view
+        lens
+        links
+        map
+        metrics-data-source
+        metrics-explorer-view
+        osquery-pack
+        osquery-saved-query
+        query
+        search
+        synthetics-dynamic-settings
+        synthetics-private-location
+        synthetics-privates-locations
+        tag
+        threshold-explorer-view
+        uptime-dynamic-settings
+        url
+        visualization
       ].freeze
 
       # Retrieves a single Kibana saved object
@@ -112,8 +130,9 @@ module Kibana
       # @param params (same as #find)
       # @param max_pages [Integer]
       # @return [Array]
-      def find_each_page(params:, max_pages: 100, **args)
+      def find_each_page(params:, max_pages: 1000, optimize: false, **args)
         params.reverse_merge!({per_page: 100})
+        params.reverse_merge!({fields: []}) if optimize
         page = 1
         data_array = []
 
@@ -227,15 +246,33 @@ module Kibana
         )
       end
 
+      # Bulk deletes Kibana saved objects
+      # @param Array<Hash> body
+      # @param params [Hash] query params
+      #   @option params [Boolean] :force
+      def bulk_delete(body:, params: {}, **args)
+        params = symbolize_keys(params).slice(:force)
+
+        request(
+          **args,
+          http_method: :post,
+          endpoint: "#{current_space_api_namespace}/saved_objects/_bulk_delete",
+          body:,
+          params:
+        )
+      end
+
       # Deletes all objects that match
       # @note Accepts same arguments as #find
       #
       # @return [void]
-      def delete_by_find(**args)
-        find_each_page(**args) do |data|
-          data['saved_objects'].each do |saved_object|
-            delete(id: saved_object['id'], type: saved_object['type'])
+      def delete_by_find(**)
+        # NOTE: do not delete during the find_each_page yield because it messes up the pagination
+        find_each_page(optimize: true, **).each do |data|
+          body = data['saved_objects'].map do |saved_object|
+            {id: saved_object['id'], type: saved_object['type']}
           end
+          bulk_delete(body:)
         end
       end
 

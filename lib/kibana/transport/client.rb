@@ -2,6 +2,33 @@
 
 module Kibana
   module Transport
+
+    module ApiExceptions
+      # base
+      APIExceptionError = Class.new(StandardError)
+
+      # http code errors
+      BadRequestError = Class.new(APIExceptionError)
+      UnauthorizedError = Class.new(APIExceptionError)
+      ForbiddenError = Class.new(APIExceptionError)
+      NotFoundError = Class.new(APIExceptionError)
+      UnprocessableEntityError = Class.new(APIExceptionError)
+
+      # generic
+      ApiError = Class.new(APIExceptionError)
+    end
+
+    module HttpStatusCodes
+      HTTP_OK_CODE = 200
+      HTTP_NO_CONTENT = 204
+
+      HTTP_BAD_REQUEST_CODE = 400
+      HTTP_UNAUTHORIZED_CODE = 401
+      HTTP_FORBIDDEN_CODE = 403
+      HTTP_NOT_FOUND_CODE = 404
+      HTTP_UNPROCESSABLE_ENTITY_CODE = 429
+    end
+
     class Client
 
       include Kibana::API
@@ -17,12 +44,12 @@ module Kibana
 
       # Simple wrapper to execute the http method on the connection object
       # use block to customize the connection object
-      def request(http_method:, endpoint:, params: {}, body: {}, raw_body: nil, raw: false, multipart: false)
-        body = Oj.dump(body) unless raw_body
+      def request(http_method:, endpoint:, params: {}, body: nil, raw_body: nil, raw: false, multipart: false)
+        body = Oj.dump(body) if body && !raw_body
 
         response = connection.public_send(http_method, endpoint) do |conn|
           conn.params = conn.params.merge(params)
-          conn.body = body
+          conn.body = body if body
           conn.headers = conn.headers.merge({'Content-Type' => 'application/json;charset=UTF-8'}) unless multipart
           yield conn if block_given?
         end
