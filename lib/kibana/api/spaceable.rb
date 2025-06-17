@@ -4,11 +4,13 @@ module Kibana
   module API
     module Spaceable
 
+      DEFAULT_SPACE = 'default'.freeze
+
       attr_reader :space_id
 
-      def initialize(*args)
-        @space_id = 'default'
-        super
+      def initialize(*, space_id: DEFAULT_SPACE, **)
+        @space_id = space_id
+        super(*, **)
       end
 
       # temporarily set the space context
@@ -37,7 +39,7 @@ module Kibana
       end
 
       def api_namespace_for_space(space_id)
-        if space_id.nil? || space_id.to_s == 'default'
+        if space_id.nil? || space_id.to_s == DEFAULT_SPACE
           'api'
         else
           "s/#{space_id}/api"

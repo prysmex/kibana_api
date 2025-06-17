@@ -5,9 +5,9 @@ module Kibana
 
     module SavedObject
       # Proxy method for {SavedObjectClient}, available in the receiving object
-      def saved_object
-        # Thread.current['saved_object_client'] ||= SavedObjectClient.new(self)
-        @saved_object = SavedObjectClient.new(self)
+      def saved_object(**)
+        # Thread.current['saved_object_client'] ||= SavedObjectClient.new(self, **)
+        @saved_object = SavedObjectClient.new(self, **)
       end
     end
 
@@ -16,42 +16,12 @@ module Kibana
       include Kibana::API::Spaceable
 
       TYPES = %i[
-        action
-        alert
-        apm-custom-dashboards
-        apm-indices
-        apm-service-group
-        canvas-element
-        canvas-workpad
-        cases
-        config
-        config-global
-        csp-rule-template
-        dashboard
-        event-annotation-group
-        graph-workspace
-        index-pattern
-        infra-custom-dashboards
-        infrastructure-monitoring-log-view
-        infrastructure-ui-source
-        inventory-view
-        lens
-        links
-        map
-        metrics-data-source
-        metrics-explorer-view
-        osquery-pack
-        osquery-saved-query
-        query
-        search
-        synthetics-dynamic-settings
-        synthetics-private-location
-        synthetics-privates-locations
-        tag
-        threshold-explorer-view
-        uptime-dynamic-settings
-        url
-        visualization
+        action alert apm-custom-dashboards apm-indices apm-service-group canvas-element canvas-workpad cases config
+        config-global csp-rule-template dashboard event-annotation-group graph-workspace index-pattern
+        infra-custom-dashboards infrastructure-monitoring-log-view infrastructure-ui-source inventory-view lens links
+        map metrics-data-source metrics-explorer-view osquery-pack osquery-saved-query query search
+        synthetics-dynamic-settings synthetics-private-location synthetics-privates-locations tag
+        threshold-explorer-view uptime-dynamic-settings url visualization
       ].freeze
 
       # Retrieves a single Kibana saved object
