@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Kibana
-  VERSION = '0.9.16'
+  VERSION = '0.9.17'
 end
