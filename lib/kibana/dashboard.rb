@@ -3,7 +3,7 @@
 require 'securerandom'
 
 module Kibana
-  CLIENT_VERSION = '9.0.4'
+  CLIENT_VERSION = '9.1.0'
   module Dashboard
 
     # @note This could be removed if classes inherit from ActiveSupport::HashWithIndifferentAccess
@@ -24,7 +24,7 @@ module Kibana
 
     # PANELS_JSON_VISUALIZATION_VERSION = '8.9.1'.freeze
     CORE_MIGRATION_VERSION = '8.8.0'
-    TYPE_MIGRATION_VERSION = '10.2.0'
+    TYPE_MIGRATION_VERSION = '10.3.0'
 
     # Backing class for a single object inside a dashboard's attributes.panelsJSON array
     #
@@ -40,11 +40,13 @@ module Kibana
     #   'panelIndex': '0bbdf49d-40e5-485c-9977-29d3293bc2d6',
     #   'embeddableConfig': {
     #     'description': '',
+    #     'savedObjectId': '97fbd60d-6a76-48ed-bd9b-2c63ae3b9fc8',
     #     'enhancements': { 'dynamicActions': { 'events': [] } },
     #     'hidePanelTitles': true,
     #     'uiState': {
     #       'vis': { 'legendOpen': false, 'colors': { 'Count': '#d6bf57' } }
-    #     }
+    #     },
+    #     'timeRange': {'from': 'now-1y/d', 'to': 'now'}
     #   },
     #   'title': 'Some dashboard specific title',
     #   'panelRefName': 'panel_0bbdf49d-40e5-485c-9977-29d3293bc2d6'
@@ -89,10 +91,9 @@ module Kibana
     #         "showApplySelections": false,
     #       },
     #     "description": "",
-    #     "kibanaSavedObjectMeta":
-    #       {
-    #         "searchSourceJSON": '{"query":{"query":"","language":"kuery"},"filter":[]}',
-    #       },
+    #     "kibanaSavedObjectMeta": {
+    #       "searchSourceJSON": '{"query":{"query":"","language":"kuery"},"filter":[]}',
+    #     },
     #     "optionsJSON": '{"useMargins":true,"syncColors":false,"syncCursor":true,"syncTooltips":false,"hidePanelTitles":false}',
     #     "panelsJSON": '[]',
     #     "timeRestore": false,
