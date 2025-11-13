@@ -4,7 +4,7 @@ module Kibana
   module API
     module Spaceable
 
-      DEFAULT_SPACE = 'default'.freeze
+      DEFAULT_SPACE = 'default'
 
       attr_reader :space_id
 

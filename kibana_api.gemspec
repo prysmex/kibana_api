@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description   = 'Ruby API for Kibana.'
   # spec.homepage      = "TODO: Put your gem's website or public repo URL here."
   spec.license = 'MIT'
-  spec.required_ruby_version = '>= 3.4.2'
+  spec.required_ruby_version = '>= 3.4.7'
 
   # spec.metadata["homepage_uri"] = spec.homepage
   # spec.metadata["source_code_uri"] = "TODO: Put your gem's public repo URL here."
