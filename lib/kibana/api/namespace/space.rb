@@ -14,14 +14,14 @@ module Kibana
     class SpaceClient < BaseClient
 
       FEATURES = %i[
-        actions advancedSettings agentBuilder aiAssistantManagementSelection apm canvas dashboard_v2 dataQuality
+        actions advancedSettings agentBuilder aiAssistantManagementSelection apm canvas cloudConnect dashboard_v2 dataQuality
         dev_tools discover_v2 enterpriseSearch enterpriseSearchAnalytics enterpriseSearchApplications filesManagement
         filesSharedImage fleet fleetv2 generalCasesV3 graph indexPatterns infrastructure logs
         maintenanceWindow manageReporting maps_v2 ml monitoring observabilityAIAssistant observabilityCasesV3
         osquery rulesSettings savedObjectsManagement savedObjectsTagging savedQueryManagement searchInferenceEndpoints
         searchPlayground searchQueryRules searchSynonyms securitySolutionAssistant securitySolutionAttackDiscovery
-        securitySolutionCasesV3 securitySolutionNotes securitySolutionSiemMigrations securitySolutionTimeline siemV4 slo
-        stackAlerts streams uptime visualize_v2
+        securitySolutionCasesV3 securitySolutionNotes securitySolutionRulesV1 securitySolutionSiemMigrations securitySolutionTimeline siemV5 slo
+        stackAlerts streams uptime visualize_v2 workflowsManagement
       ].freeze
 
       # BODY_TEMPLATE = {
@@ -31,7 +31,8 @@ module Kibana
       #   "color": "#aabbcc",
       #   "initials": "MK",
       #   "disabledFeatures": [],
-      #   "imageUrl": ""
+      #   "imageUrl": "",
+      #   "solution": "classic"
       # }
 
       # Creates a Kibana space
@@ -187,7 +188,7 @@ module Kibana
 
       def symbolize_and_filter(body)
         body.transform_keys(&:to_sym).slice(
-          :id, :name, :description, :disabledFeatures, :initials, :color, :imageUrl
+          :id, :name, :description, :disabledFeatures, :initials, :color, :imageUrl, :solution
         )
       end
 
